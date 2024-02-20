@@ -1,10 +1,10 @@
-import { catData, getFiltersType } from "../utils/api.js";
+import { catData, getFiltersType, getProductsByCatId, getProductsByFilters } from "../utils/api.js";
 import {fillpage } from "../utils/index.js"
 
 
 let womenNavData = getNavDataWom()
-createNav(womenNavData)
-createBottonListenWoM()
+createNav()
+//createBottonListenWoM()
 
 function getNavDataWom(){ 
     let wayToClothingCats = catData.Women.children[4].children[3].children[1].children
@@ -30,28 +30,77 @@ function getNavDataMen(){
     return navData
 }
 
+
 // just nu hårdkodas vägen här men det behövs ändras eftersom vägen ser olika ut beroende på män eller kvinna
-async function createNav(navData){
+/*async function createNav(navData){
+    
     navData.forEach(titleData =>{
         let titleDiv = document.createElement("div")
         titleDiv.classList.add("nav-title")
         titleDiv.innerHTML = titleData.title
+        let products
         if(titleData.title != "Clothing"){
             titleDiv.addEventListener("click", async () =>{
-                document.getElementById("wrapper").innerHTML = ""
                 switch(titleData.title){
-                    case "New in":
+                    case "New in": // måste fixas
                     case "Bestsellers":
-                        await fillpage(titleData.categoryId)
+                        products = await getProductsByCatId(titleData.categoryId)
                     break;
                     case "Sale":
-                        fillpage(28250) // detta är såå hårdkodat, måsta komma på ett bättre sätt 
+                        products = await getProductsByCatId(28250)
+                        // detta är såå hårdkodat, måsta komma på ett bättre sätt 
                     break;
                 }
+                fillpage(products) 
             } )
-
         }else{
             createHoverDiv(titleDiv, titleData.children[1].children)
+            titleDiv.addEventListener("mouseenter", () => {
+                document.getElementById("hover-div").classList.remove("hidden")
+            } )
+
+            titleDiv.addEventListener("mouseleave", () => {
+                document.getElementById("hover-div").classList.add("hidden")
+            } )
+        }
+ 
+        document.getElementById("navigation").append(titleDiv)
+    })
+   
+}*/
+
+async function createNav(){
+    let navTitles = [
+        {
+            title: "New In",
+            id: 51163}, 
+        {
+            title: "Bestsellers",
+            id: 16661
+        }, 
+        {
+            "title": "Clothing",
+            id: null
+        },
+        {
+            "title":"Sale",
+            id: 28250
+        }]
+
+    navTitles.forEach(title =>{
+        let titleDiv = document.createElement("div")
+        titleDiv.classList.add("nav-title")
+        titleDiv.innerHTML = title.title
+        let products
+        if(title.title != "Clothing"){
+            titleDiv.addEventListener("click", async () =>{
+                products = await getProductsByCatId(title.id)
+                fillpage(products) 
+            } )
+        }else{
+            let womenCat = catData.Women.children.find(child => child.title == "Categories").children.find(child => child.title == "Clothing").children.find(child => child.title == "SHOP BY PRODUCT").children
+            console.log(womenCat)
+            createHoverDiv(titleDiv, womenCat)
             titleDiv.addEventListener("mouseenter", () => {
                 document.getElementById("hover-div").classList.remove("hidden")
             } )
@@ -137,10 +186,12 @@ function createCategories(allCategories){
         }else{
             div2.appendChild(categori)
         }
-        categori.addEventListener("click", () =>{
-            fillpage(cat.categoryId)
+        categori.addEventListener("click", async () =>{
             document.getElementById("hover-div").classList.add("hidden")
-            createFilterType(cat.title)
+            await createAllFilters(cat)
+            console.log(cat)
+            let products = await getProductsByCatId(cat.categoryId)
+            fillpage(products)
         })
     })
     
@@ -149,12 +200,57 @@ function createCategories(allCategories){
     return catWrapper
 }
 
-async function createFilterType(type){
-    let filterWrapper = document.createElement("div")
-    filterWrapper.classList.add("filter-wrapper")
-    let allTypeFilter = await getFiltersType(type)
-    allTypeFilter.forEach(type =>{
-        let typDiv = document.createElement("div")
-        typDiv.innerHTML = type.name 
-    })
+async function createAllFilters(style){
+    let allFilterWrapper = document.createElement("div")
+    allFilterWrapper.id = "all-filters"
+
+    let typeFilter = await createFilterStyle(style)
+    allFilterWrapper.appendChild(typeFilter)
+    document.getElementById("alt1").append(allFilterWrapper)
+}
+
+async function createFilterStyle(style){
+    console.log(style)
+    let filterTypeWrapper = document.createElement("div")
+    filterTypeWrapper.classList.add("filter-wrapper")
+    let allTypeFilter = await getFiltersType(style.categoryId)
+    console.log(allTypeFilter)
+
+   if(allTypeFilter != null){ /// om den är null måsta vi göra något annat för att visa att det inte finns fler alternativ
+       allTypeFilter.forEach(type =>{
+            console.log(type)
+            let typeDiv = document.createElement("div")
+            typeDiv.innerHTML = type.name 
+            filterTypeWrapper.appendChild(typeDiv)
+            typeDiv.addEventListener("click", async () =>{
+                document.getElementById("wrapper").innerHTML = ""
+                let productData = await getProductsByFilters(style.categoryId, type.id)
+                fillpage(productData)
+            })
+        })  
+    } 
+    return filterTypeWrapper
+}
+
+async function createFilterColor(style){
+    console.log()
+    let filterTypeWrapper = document.createElement("div")
+    filterTypeWrapper.classList.add("filter-wrapper")
+    let allTypeFilter = await getFiltersType(style.categoryId)
+    console.log(allTypeFilter)
+
+   if(allTypeFilter != null){ /// om den är null måsta vi göra något annat för att visa att det inte finns fler alternativ
+       allTypeFilter.forEach(type =>{
+            console.log(type)
+            let typeDiv = document.createElement("div")
+            typeDiv.innerHTML = type.name 
+            filterTypeWrapper.appendChild(typeDiv)
+            typeDiv.addEventListener("click", async () =>{
+                document.getElementById("wrapper").innerHTML = ""
+                let productData = await getProductsByFilters(style.categoryId, type.id)
+                fillpage(productData)
+            })
+        })  
+    } 
+    return filterTypeWrapper
 }
