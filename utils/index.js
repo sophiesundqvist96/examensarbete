@@ -1,6 +1,5 @@
-import { getProductsByCatId, getCategories } from "./api.js"
-let categoriData = await getCategories()
-console.log(categoriData)
+import { getProductsByCatId} from "./api.js"
+
 
 function createProduct(product){
     // create wrapper for one product
@@ -23,17 +22,16 @@ function createProduct(product){
     return productWrapper
 }
 
-export async function fillpage(catId){
-    let products = await getProductsByCatId(catId)
-    console.log(products)
-    let wrapper = document.getElementById("wrapper")
+export function fillpage(products){
+    let wrapper = document.createElement("wrapper")
+    wrapper.id = "wrapper"
 
     products.forEach(product => {
         let productDiv = createProduct(product)
         wrapper.append(productDiv)
     });
 
-    document.querySelector("body").append(wrapper)
+    document.getElementById("alt1").append(wrapper)
 }
 
 //fillpage()
