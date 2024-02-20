@@ -1,0 +1,93 @@
+#header {
+    height: 110px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: 1px solid black;
+}
+
+#title {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-weight: 300;
+    letter-spacing: 3px;
+    text-align: center;
+    margin-left: 60px;
+    margin-right: 20px;
+    font-size: 30pt;
+}
+
+#header>p {
+    margin: 10px;
+}
+
+#navigation {
+    height: 50px;
+    border-bottom: 1px solid black;
+    display: flex;
+    padding-left: 60px;
+}
+
+.nav-title {
+    display: flex;
+    align-items: center;
+    margin-right: 50px;
+    position: relative;
+}
+
+.nav-title:hover {
+    cursor: pointer;
+}
+
+#wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.product-info>p {
+    margin: 5px;
+}
+
+.product-info>.brand-name {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 8pt;
+    margin-top: 3px;
+}
+
+.product-info>.price {
+    margin-top: 9px;
+}
+
+#hover-div {
+    position: absolute;
+    top: 50px;
+    width: 80vw;
+    background-color: lightgray;
+    left: -200px;
+    padding: 40px;
+}
+
+#cat-wrapper {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+#hover-div> :nth-child(1) {
+    margin-bottom: 30px;
+}
+
+#cat-wrapper>div {
+    flex-grow: 1;
+}
+
+#cat-wrapper>div>p {
+    margin: 2px;
+}
+
+#cat-wrapper>div>p:hover {
+    cursor: pointer;
+}
+
+.hidden {
+    display: none;
+}
