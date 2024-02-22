@@ -40,7 +40,7 @@
 
 #wrapper {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 10px;
 }
 
@@ -61,7 +61,7 @@
 #hover-div {
     position: absolute;
     top: 50px;
-    width: 80vw;
+    width: 60vw;
     background-color: lightgray;
     left: -200px;
     padding: 40px;
@@ -90,4 +90,13 @@
 
 .hidden {
     display: none;
+}
+
+.catTitle {
+    font-weight: bolder;
+    font-size: 30px;
+}
+
+.category-column2 {
+    padding-top: 60px;
 }
