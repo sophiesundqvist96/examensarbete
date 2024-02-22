@@ -1,73 +1,8 @@
-import { catData, getFiltersType, getProductsByCatId, getProductsByFilters } from "../utils/api.js";
+import { catData,getProductsByCatId, getFilter, getFilteredProducts } from "../utils/api.js";
 import {fillpage } from "../utils/index.js"
 
 
-let womenNavData = getNavDataWom()
 createNav()
-//createBottonListenWoM()
-
-function getNavDataWom(){ 
-    let wayToClothingCats = catData.Women.children[4].children[3].children[1].children
-    let newIn = wayToClothingCats[2]
-    let bestsellers = wayToClothingCats[1]
-    let clothing = catData.Women.children[4].children[3]
-    let sale = catData.Women.children[4].children[0]
-
-    let navData = [newIn, bestsellers, clothing, sale]
-    return navData
-    
-}
-
-function getNavDataMen(){
-    let wayToClothingCats = catData.Men.children[4].children[3].children[1].children
-
-    let newIn = wayToClothingCats[2]
-    let bestsellers = wayToClothingCats[1]
-    let clothing = catData.Men.children[4].children[3]
-    let sale = catData.Men.children[4].children[1]
-
-    let navData = [newIn, bestsellers, clothing, sale]
-    return navData
-}
-
-
-// just nu hårdkodas vägen här men det behövs ändras eftersom vägen ser olika ut beroende på män eller kvinna
-/*async function createNav(navData){
-    
-    navData.forEach(titleData =>{
-        let titleDiv = document.createElement("div")
-        titleDiv.classList.add("nav-title")
-        titleDiv.innerHTML = titleData.title
-        let products
-        if(titleData.title != "Clothing"){
-            titleDiv.addEventListener("click", async () =>{
-                switch(titleData.title){
-                    case "New in": // måste fixas
-                    case "Bestsellers":
-                        products = await getProductsByCatId(titleData.categoryId)
-                    break;
-                    case "Sale":
-                        products = await getProductsByCatId(28250)
-                        // detta är såå hårdkodat, måsta komma på ett bättre sätt 
-                    break;
-                }
-                fillpage(products) 
-            } )
-        }else{
-            createHoverDiv(titleDiv, titleData.children[1].children)
-            titleDiv.addEventListener("mouseenter", () => {
-                document.getElementById("hover-div").classList.remove("hidden")
-            } )
-
-            titleDiv.addEventListener("mouseleave", () => {
-                document.getElementById("hover-div").classList.add("hidden")
-            } )
-        }
- 
-        document.getElementById("navigation").append(titleDiv)
-    })
-   
-}*/
 
 async function createNav(){
     let navTitles = [
@@ -79,11 +14,11 @@ async function createNav(){
             id: 16661
         }, 
         {
-            "title": "Clothing",
+            title: "Clothing",
             id: null
         },
         {
-            "title":"Sale",
+            title: "Sale",
             id: 28250
         }]
 
@@ -95,6 +30,7 @@ async function createNav(){
         if(title.title != "Clothing"){
             titleDiv.addEventListener("click", async () =>{
                 products = await getProductsByCatId(title.id)
+                await createAllFilters(title.id)
                 fillpage(products) 
             } )
         }else{
@@ -188,7 +124,7 @@ function createCategories(allCategories){
         }
         categori.addEventListener("click", async () =>{
             document.getElementById("hover-div").classList.add("hidden")
-            await createAllFilters(cat)
+            await createAllFilters(cat.categoryId)
             console.log(cat)
             let products = await getProductsByCatId(cat.categoryId)
             fillpage(products)
@@ -200,57 +136,131 @@ function createCategories(allCategories){
     return catWrapper
 }
 
-async function createAllFilters(style){
-    let allFilterWrapper = document.createElement("div")
-    allFilterWrapper.id = "all-filters"
+async function createAllFilters(catId){
+    let filterTypes = ["style", "color", "brand", "size"] // avkommenterat för att ta mindre fetch medan jag stylar
+    let allFilterWrapper = document.getElementById("all-filters")
+    allFilterWrapper.innerHTML = ""
 
-    let typeFilter = await createFilterStyle(style)
-    allFilterWrapper.appendChild(typeFilter)
-    document.getElementById("alt1").append(allFilterWrapper)
+    // Skapa en array för att lagra alla asynkrona anrop
+    let asyncFilterPromises = filterTypes.map(async filter => {
+        let arrayOfFilters = await getFilter(filter, catId); // Vänta på att getFilter ska slutföras
+        let filterWrapper = createFilters(arrayOfFilters, filter, catId);
+        return filterWrapper;
+    });
+
+    // Vänta på att alla asynkrona anrop ska slutföras innan du fortsätter
+    let filterWrappers = await Promise.all(asyncFilterPromises);
+
+    // Lägg till alla filterWrappers till allFilterWrapper
+    filterWrappers.forEach(filterWrapper => {
+        allFilterWrapper.appendChild(filterWrapper);
+    });
+
+    document.getElementById("alt1").appendChild(allFilterWrapper)
 }
 
-async function createFilterStyle(style){
-    console.log(style)
-    let filterTypeWrapper = document.createElement("div")
-    filterTypeWrapper.classList.add("filter-wrapper")
-    let allTypeFilter = await getFiltersType(style.categoryId)
-    console.log(allTypeFilter)
+function createFilters(arrayOfFilters, filterTitle, catId){
+    console.log(arrayOfFilters)
+    let filterWrapper = document.createElement("div")
+    filterWrapper.classList.add("filter-wrapper")
 
-   if(allTypeFilter != null){ /// om den är null måsta vi göra något annat för att visa att det inte finns fler alternativ
-       allTypeFilter.forEach(type =>{
-            console.log(type)
-            let typeDiv = document.createElement("div")
-            typeDiv.innerHTML = type.name 
-            filterTypeWrapper.appendChild(typeDiv)
-            typeDiv.addEventListener("click", async () =>{
-                document.getElementById("wrapper").innerHTML = ""
-                let productData = await getProductsByFilters(style.categoryId, type.id)
-                fillpage(productData)
+    let buttonDiv = document.createElement("div")
+    buttonDiv.innerHTML = `
+        <div>${filterTitle.charAt(0).toUpperCase() + filterTitle.slice(1)}</div>
+        <i class="fa-solid fa-angle-down"></i>`
+
+    buttonDiv.addEventListener("click", () =>{
+        let content = buttonDiv.parentNode.querySelector(".dropdown-content");
+        if (content.style.display === "block") {
+            content.style.display = "none";
+            buttonDiv.querySelector("i").classList.add("fa-angle-down")
+            buttonDiv.querySelector("i").classList.remove("fa-angle-up")
+            console.log(buttonDiv.querySelector("i"))
+
+        } else {
+            content.style.display = "block";
+            buttonDiv.querySelector("i").classList.remove("fa-angle-down")
+            buttonDiv.querySelector("i").classList.add("fa-angle-up")
+            console.log(buttonDiv.querySelector("i"))
+        }
+    })
+
+    let dropdownWrapper = document.createElement("div")
+    dropdownWrapper.classList.add("dropdown-content")
+
+    filterWrapper.append(buttonDiv, dropdownWrapper)
+
+   if(arrayOfFilters != null){ /// om den är null måsta vi göra något annat för att visa att det inte finns fler alternativ
+        arrayOfFilters.forEach(filter =>{
+            let option = document.createElement("div")
+            // för namnet på filtert
+            let filterDiv = document.createElement("div")
+            filterDiv.innerHTML = filter.name
+            //checkBox för att tryck i ett alternativ
+            let checkBox = document.createElement("input")
+            checkBox.setAttribute("type", "checkbox");
+
+            option.append(filterDiv, checkBox)
+            dropdownWrapper.append(option)
+
+            // här ska det sorteras när man trycker i rutan istället
+            checkBox.addEventListener("click", () =>{
+                if(checkBox.checked == true){
+                    filterOnCheckedItems(filterTitle, filter.id, "add", catId)
+                }else{
+                    filterOnCheckedItems(filterTitle, filter.id, "delete", catId)
+                }
             })
         })  
     } 
-    return filterTypeWrapper
+    return filterWrapper
 }
 
-async function createFilterColor(style){
-    console.log()
-    let filterTypeWrapper = document.createElement("div")
-    filterTypeWrapper.classList.add("filter-wrapper")
-    let allTypeFilter = await getFiltersType(style.categoryId)
-    console.log(allTypeFilter)
 
-   if(allTypeFilter != null){ /// om den är null måsta vi göra något annat för att visa att det inte finns fler alternativ
-       allTypeFilter.forEach(type =>{
-            console.log(type)
-            let typeDiv = document.createElement("div")
-            typeDiv.innerHTML = type.name 
-            filterTypeWrapper.appendChild(typeDiv)
-            typeDiv.addEventListener("click", async () =>{
-                document.getElementById("wrapper").innerHTML = ""
-                let productData = await getProductsByFilters(style.categoryId, type.id)
-                fillpage(productData)
-            })
-        })  
-    } 
-    return filterTypeWrapper
+let filterItems = [
+    {
+        title: "style",
+        checkedItems: []
+    },
+    {
+        title: "color",
+        checkedItems: [] 
+    },
+    {
+        title: "brand",
+        checkedItems: [] 
+    },
+    {
+        title: "price-range",
+        checkedItems: []
+    }
+]
+
+async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId){
+    if(addOrdDelete == "add"){
+        filterItems.find(item => item.title == title).checkedItems.push(checkedItem)
+    }else{
+        filterItems.find(item => item.title == title).checkedItems.pop(checkedItem)
+    }
+
+    let filter = filterItems.filter(item => item.checkedItems.length > 0)
+
+    let searchString = ""
+    for(let i = 0; i < filter.length ; i++){
+        if(i > 0){
+            searchString += "&"
+        }
+        searchString  += filter[i].title
+        searchString  += "="
+        for(let j = 0; j < filter[i].checkedItems.length; j++){
+            if(j > 0){
+                searchString += ","
+            }
+            searchString += filter[i].checkedItems[j]
+        }
+    }
+
+    let products = await getFilteredProducts(catId, searchString)
+    document.getElementById("wrapper").innerHTML = ""
+    fillpage(products)
 }
