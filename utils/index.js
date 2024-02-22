@@ -15,7 +15,7 @@ function createProduct(product){
     infoDiv.innerHTML = `
         <p class="brand-name">${product.brandName.toUpperCase()}</p>
         <p>${product.name}</p>
-        <p class="price">${product.price.current.value} kr</p>`
+        <p class="price">${product.price.current.text}</p>`
     
     productWrapper.appendChild(imgDiv)
     productWrapper.appendChild(infoDiv)
@@ -23,8 +23,7 @@ function createProduct(product){
 }
 
 export function fillpage(products){
-    let wrapper = document.createElement("wrapper")
-    wrapper.id = "wrapper"
+    let wrapper = document.getElementById("wrapper")
 
     products.forEach(product => {
         let productDiv = createProduct(product)
