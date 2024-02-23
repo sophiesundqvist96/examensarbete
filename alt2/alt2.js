@@ -1,4 +1,4 @@
-import { catData, getFiltersType, getProductsByCatId, getProductsByFilters } from "../utils/api.js";
+import { catData, getProductsByCatId, getFilter, getFilteredProducts } from "../utils/api.js";
 import { fillpage } from "../utils/index.js"
 
 
@@ -183,8 +183,6 @@ function createCategories(womenData, menData) {
     let catWrapper = document.createElement("div");
     catWrapper.id = "cat-wrapper";
 
-
-
     let womenDiv1 = document.createElement("div");
     womenDiv1.classList.add("category-column");
     let womenDiv2 = document.createElement("div");
@@ -211,7 +209,8 @@ function createCategories(womenData, menData) {
         let category = document.createElement("p");
         category.innerHTML = cat.title;
         category.addEventListener("click", async() => {
-            console.log(cat)
+            document.getElementById("hover-div").classList.add("hidden")
+            await createAllFilters(cat.categoryId)
             products = await getProductsByCatId(cat.categoryId)
             fillpage(products)
 
@@ -237,6 +236,8 @@ function createCategories(womenData, menData) {
         let category = document.createElement("p");
         category.innerHTML = cat.title;
         category.addEventListener("click", async() => {
+            document.getElementById("hover-div").classList.add("hidden")
+            await createAllFilters(cat.categoryId)
             products = await getProductsByCatId(cat.categoryId)
             fillpage(products)
 
@@ -288,12 +289,199 @@ function createCategories(womenData, menData) {
 //     return catWrapper
 // }
 
-async function createFilterType(type) {
+async function createAllFilters(catId) {
+    let filterTypes = ["style", "color", "brand", "size", "design"]
+
+    // , "body-fit", "discount", "range", "price-range"] // avkommenterat för att ta mindre fetch medan jag stylar
+
+    let allFilterContainer = document.getElementById("all-filters-container")
+
+
+    let allFilterWrapper = document.getElementById("all-filters")
+    allFilterWrapper.innerHTML = ""
+
+    // Skapa en array för att lagra alla asynkrona anrop
+    let asyncFilterPromises = filterTypes.map(async filter => {
+        let arrayOfFilters = await getFilter(filter, catId); // Vänta på att getFilter ska slutföras
+        let filterWrapper = createFilters(arrayOfFilters, filter, catId);
+        console.log(arrayOfFilters)
+        console.log(filter)
+        console.log(catId)
+        return filterWrapper;
+    });
+
+    // Vänta på att alla asynkrona anrop ska slutföras innan du fortsätter
+    let filterWrappers = await Promise.all(asyncFilterPromises);
+
+    // Lägg till alla filterWrappers till allFilterWrapper
+    filterWrappers.forEach(filterWrapper => {
+        allFilterContainer.appendChild(filterWrapper);
+    });
+
+    allFilterContainer.appendChild(allFilterWrapper)
+}
+
+function createFilters(arrayOfFilters, filterTitle, catId) {
+    console.log(arrayOfFilters)
     let filterWrapper = document.createElement("div")
     filterWrapper.classList.add("filter-wrapper")
-    let allTypeFilter = await getFiltersType(type)
-    allTypeFilter.forEach(type => {
-        let typDiv = document.createElement("div")
-        typDiv.innerHTML = type.name
+
+    let buttonDiv = document.createElement("div")
+    buttonDiv.innerHTML = `
+        <div>${filterTitle.charAt(0).toUpperCase() + filterTitle.slice(1)}</div>
+        <i class="fa-solid fa-angle-down"></i>`
+
+    buttonDiv.addEventListener("click", () => {
+        let content = buttonDiv.parentNode.querySelector(".dropdown-content");
+        if (content.style.display === "block") {
+            content.style.display = "none";
+            buttonDiv.querySelector("i").classList.add("fa-angle-down")
+            buttonDiv.querySelector("i").classList.remove("fa-angle-up")
+            console.log(buttonDiv.querySelector("i"))
+
+        } else {
+            content.style.display = "block";
+            buttonDiv.querySelector("i").classList.remove("fa-angle-down")
+            buttonDiv.querySelector("i").classList.add("fa-angle-up")
+            console.log(buttonDiv.querySelector("i"))
+        }
     })
+
+    let dropdownWrapper = document.createElement("div")
+    dropdownWrapper.classList.add("dropdown-content")
+
+    filterWrapper.append(buttonDiv, dropdownWrapper)
+
+    if (arrayOfFilters != null) { /// om den är null måsta vi göra något annat för att visa att det inte finns fler alternativ
+        arrayOfFilters.forEach(filter => {
+            let option = document.createElement("div")
+                // för namnet på filtert
+            let filterDiv = document.createElement("div")
+            filterDiv.innerHTML = filter.name
+
+            //checkBox för att tryck i ett alternativ
+            let checkBox = document.createElement("input")
+            checkBox.setAttribute("type", "checkbox");
+
+            option.append(filterDiv, checkBox)
+            dropdownWrapper.append(option)
+
+            // här ska det sorteras när man trycker i rutan istället
+            const underFiltersContainer = document.getElementById('under-filters');
+            let selectedFilters = []; // Array för att lagra valda filternamn
+
+            checkBox.addEventListener("click", () => {
+                if (checkBox.checked) {
+                    filterOnCheckedItems(filterTitle, filter.id, "add", catId);
+
+                    // Lägg till filternamnet i arrayen av valda filter
+                    selectedFilters.push(filter.name);
+
+                    selectedFilters.forEach(filterName => {
+                        const filterNameParagraph = document.createElement("p");
+                        filterNameParagraph.classList.add("filterNameParagraph")
+                        filterNameParagraph.innerHTML = filterName;
+                        underFiltersContainer.appendChild(filterNameParagraph);
+
+                    });
+
+                    // Lägg till den gemensamma <p>-elementet i behållaren
+                } else {
+                    filterOnCheckedItems(filterTitle, filter.id, "delete", catId);
+
+                    const filterNameParagraphs = underFiltersContainer.querySelectorAll(`p`);
+                    filterNameParagraphs.forEach(paragraph => {
+                        if (paragraph.textContent.trim() === filter.name) {
+                            underFiltersContainer.removeChild(paragraph);
+                            // Ta bort filternamnet från arrayen av valda filter
+                            const index = selectedFilters.indexOf(filter.name);
+                            if (index !== -1) {
+                                selectedFilters.splice(index, 1);
+                            }
+                        }
+                    });
+                }
+            });
+        })
+    }
+    return filterWrapper
 }
+
+
+let filterItems = [{
+        title: "style",
+        checkedItems: []
+    },
+    {
+        title: "color",
+        checkedItems: []
+    },
+    {
+        title: "brand",
+        checkedItems: []
+    },
+    {
+        title: "price-range",
+        checkedItems: []
+    },
+    {
+        title: "design",
+        checkedItems: []
+    },
+    {
+        title: "body-fit",
+        checkedItems: []
+    },
+    {
+        title: "discount",
+        checkedItems: []
+    },
+    {
+        title: "range",
+        checkedItems: []
+    },
+    {
+        title: "price-range",
+        checkedItems: []
+    }
+]
+
+async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
+    if (addOrdDelete == "add") {
+        filterItems.find(item => item.title == title).checkedItems.push(checkedItem)
+    } else {
+        filterItems.find(item => item.title == title).checkedItems.pop(checkedItem)
+    }
+
+    let filter = filterItems.filter(item => item.checkedItems.length > 0)
+
+    let searchString = ""
+    for (let i = 0; i < filter.length; i++) {
+        if (i > 0) {
+            searchString += "&"
+        }
+        searchString += filter[i].title
+        searchString += "="
+        for (let j = 0; j < filter[i].checkedItems.length; j++) {
+            if (j > 0) {
+                searchString += ","
+            }
+            searchString += filter[i].checkedItems[j]
+        }
+    }
+
+    let products = await getFilteredProducts(catId, searchString)
+    document.getElementById("wrapper").innerHTML = ""
+    fillpage(products)
+}
+
+
+// async function createFilterType(type) {
+//     let filterWrapper = document.createElement("div")
+//     filterWrapper.classList.add("filter-wrapper")
+//     let allTypeFilter = await getFiltersType(type)
+//     allTypeFilter.forEach(type => {
+//         let typDiv = document.createElement("div")
+//         typDiv.innerHTML = type.name
+//     })
+// }
