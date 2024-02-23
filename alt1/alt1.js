@@ -3,15 +3,23 @@ import {fillpage } from "../utils/index.js"
 
 
 createNav()
+createBottonListenWoM()
 
 async function createNav(){
     let navTitles = [
         {
             title: "New In",
-            id: 51163}, 
+            id:{
+                women: 51163,
+                men:27110
+            }, 
+        },
         {
             title: "Bestsellers",
-            id: 16661
+            id: {
+                women: 16661,
+                men: 16691
+            }
         }, 
         {
             title: "Clothing",
@@ -19,7 +27,10 @@ async function createNav(){
         },
         {
             title: "Sale",
-            id: 28250
+            id: {
+                women: 28250,
+                men: 8409
+            }
         }]
 
     navTitles.forEach(title =>{
@@ -29,14 +40,25 @@ async function createNav(){
         let products
         if(title.title != "Clothing"){
             titleDiv.addEventListener("click", async () =>{
-                products = await getProductsByCatId(title.id)
-                await createAllFilters(title.id)
+                let id;
+                if(document.getElementById("navigation").classList.contains("women")){
+                    id = title.id.women
+                }else{
+                   id = title.id.men
+                }
+                
+                products = await getProductsByCatId(id)
+                await createAllFilters(id)
                 fillpage(products) 
             } )
         }else{
-            let womenCat = catData.Women.children.find(child => child.title == "Categories").children.find(child => child.title == "Clothing").children.find(child => child.title == "SHOP BY PRODUCT").children
-            console.log(womenCat)
-            createHoverDiv(titleDiv, womenCat)
+            let data;
+            if(document.getElementById("navigation").classList.contains("women")){
+                data = catData.Women.children.find(child => child.title == "Categories").children.find(child => child.title == "Clothing").children.find(child => child.title == "SHOP BY PRODUCT").children
+            }else{
+               data = catData.Men.children.find(child => child.title == "Categories").children.find(child => child.title == "Clothing").children.find(child => child.title == "SHOP BY PRODUCT").children
+            }
+            createHoverDiv(titleDiv, data)
             titleDiv.addEventListener("mouseenter", () => {
                 document.getElementById("hover-div").classList.remove("hidden")
             } )
@@ -55,25 +77,24 @@ async function createNav(){
 function changeToMen(){
     let navWrapper = document.getElementById("navigation")
     if(navWrapper.classList.contains("women")){
+        document.getElementById("wrapper").innerHTML = ""
         // här borde också läggas till att man kommer till "första sidan" som är anpassad för män
-        navWrapper.innerHTML = ""
         navWrapper.classList.remove("women")
         navWrapper.classList.add("men")
-        let menNavData = getNavDataMen()
-        createNav(menNavData)
+        navWrapper.innerHTML = ""
+        createNav()
     } 
 }
 
 function changeToWomen(){
     let navWrapper = document.getElementById("navigation")
     if(navWrapper.classList.contains("men")){
-        navWrapper.innerHTML=""
+        document.getElementById("wrapper").innerHTML = ""
         // här borde också läggas till att man kommer till "första sidan" som är anpassad för kvinnor
         navWrapper.classList.remove("men")
         navWrapper.classList.add("women")
-        let wommenNavData = getNavDataWom()
-        createNav(wommenNavData)
-
+        navWrapper.innerHTML = ""
+        createNav()
     } 
 }
 
@@ -106,7 +127,6 @@ function createHoverDiv(titleDiv, allCategories){
 
 
 function createCategories(allCategories){
-    console.log(allCategories)
     let catWrapper = document.createElement("div")
     catWrapper.id = "cat-wrapper"
     
@@ -125,7 +145,6 @@ function createCategories(allCategories){
         categori.addEventListener("click", async () =>{
             document.getElementById("hover-div").classList.add("hidden")
             await createAllFilters(cat.categoryId)
-            console.log(cat)
             let products = await getProductsByCatId(cat.categoryId)
             fillpage(products)
         })
@@ -155,12 +174,9 @@ async function createAllFilters(catId){
     filterWrappers.forEach(filterWrapper => {
         allFilterWrapper.appendChild(filterWrapper);
     });
-
-    document.getElementById("alt1").appendChild(allFilterWrapper)
 }
 
 function createFilters(arrayOfFilters, filterTitle, catId){
-    console.log(arrayOfFilters)
     let filterWrapper = document.createElement("div")
     filterWrapper.classList.add("filter-wrapper")
 
@@ -175,13 +191,11 @@ function createFilters(arrayOfFilters, filterTitle, catId){
             content.style.display = "none";
             buttonDiv.querySelector("i").classList.add("fa-angle-down")
             buttonDiv.querySelector("i").classList.remove("fa-angle-up")
-            console.log(buttonDiv.querySelector("i"))
 
         } else {
             content.style.display = "block";
             buttonDiv.querySelector("i").classList.remove("fa-angle-down")
             buttonDiv.querySelector("i").classList.add("fa-angle-up")
-            console.log(buttonDiv.querySelector("i"))
         }
     })
 
@@ -245,6 +259,7 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId){
 
     let filter = filterItems.filter(item => item.checkedItems.length > 0)
 
+    let filterAmount = 0
     let searchString = ""
     for(let i = 0; i < filter.length ; i++){
         if(i > 0){
@@ -253,6 +268,7 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId){
         searchString  += filter[i].title
         searchString  += "="
         for(let j = 0; j < filter[i].checkedItems.length; j++){
+            filterAmount++;
             if(j > 0){
                 searchString += ","
             }
@@ -261,6 +277,36 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId){
     }
 
     let products = await getFilteredProducts(catId, searchString)
+    createFilterCount(filterAmount, catId)
     document.getElementById("wrapper").innerHTML = ""
     fillpage(products)
+}
+
+function createFilterCount(count, catId){
+    let countWrapper = document.getElementById("count-wrapper")
+    countWrapper.innerHTML = ""
+    let clearButton = document.createElement("p")
+    clearButton.innerHTML = "Clear all"
+
+    let counter = document.createElement("p")
+    counter.innerHTML = `Filters (${count})`
+
+    clearButton.addEventListener("click", async () =>{
+        let allInputs = Array.from(document.querySelectorAll("input"))
+        let checkedInputs = allInputs.filter(input => input.checked == true)
+        checkedInputs.forEach(input =>{
+            input.checked = false
+        }) 
+        filterItems.forEach(filter =>{
+            filter.checkedItems = []
+        })
+
+        let products = await getProductsByCatId(catId)
+        document.getElementById("wrapper").innerHTML = ""
+        fillpage(products)
+        createFilterCount(0 , catId)
+
+    })
+
+    countWrapper.append(clearButton, counter)
 }

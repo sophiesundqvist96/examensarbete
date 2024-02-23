@@ -54,3 +54,15 @@
 .product-img > img{
     border: 0.2px solid #e4e3e3;
 }
+
+#count-wrapper{
+    display: flex;
+}
+
+#count-wrapper > p{
+    margin-right: 20px;
+}
+
+#count-wrapper > p:hover{
+    cursor: pointer;
+}
