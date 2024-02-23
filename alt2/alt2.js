@@ -322,7 +322,6 @@ async function createAllFilters(catId) {
 }
 
 function createFilters(arrayOfFilters, filterTitle, catId) {
-    console.log(arrayOfFilters)
     let filterWrapper = document.createElement("div")
     filterWrapper.classList.add("filter-wrapper")
 
@@ -337,13 +336,11 @@ function createFilters(arrayOfFilters, filterTitle, catId) {
             content.style.display = "none";
             buttonDiv.querySelector("i").classList.add("fa-angle-down")
             buttonDiv.querySelector("i").classList.remove("fa-angle-up")
-            console.log(buttonDiv.querySelector("i"))
 
         } else {
             content.style.display = "block";
             buttonDiv.querySelector("i").classList.remove("fa-angle-down")
             buttonDiv.querySelector("i").classList.add("fa-angle-up")
-            console.log(buttonDiv.querySelector("i"))
         }
     })
 
@@ -370,43 +367,63 @@ function createFilters(arrayOfFilters, filterTitle, catId) {
             const underFiltersContainer = document.getElementById('under-filters');
             let selectedFilters = []; // Array för att lagra valda filternamn
 
+
             checkBox.addEventListener("click", () => {
                 if (checkBox.checked) {
                     filterOnCheckedItems(filterTitle, filter.id, "add", catId);
-
                     // Lägg till filternamnet i arrayen av valda filter
                     selectedFilters.push(filter.name);
+                    handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, filterTitle, catId, checkBox)
 
-                    selectedFilters.forEach(filterName => {
-                        const filterNameParagraph = document.createElement("p");
-                        filterNameParagraph.classList.add("filterNameParagraph")
-                        filterNameParagraph.innerHTML = filterName;
-                        underFiltersContainer.appendChild(filterNameParagraph);
-
-                    });
-
-                    // Lägg till den gemensamma <p>-elementet i behållaren
+                    // Lägg till den gemensamma <div>-elementet i behållaren
                 } else {
                     filterOnCheckedItems(filterTitle, filter.id, "delete", catId);
-
-                    const filterNameParagraphs = underFiltersContainer.querySelectorAll(`p`);
-                    filterNameParagraphs.forEach(paragraph => {
-                        if (paragraph.textContent.trim() === filter.name) {
-                            underFiltersContainer.removeChild(paragraph);
-                            // Ta bort filternamnet från arrayen av valda filter
-                            const index = selectedFilters.indexOf(filter.name);
-                            if (index !== -1) {
-                                selectedFilters.splice(index, 1);
-                            }
-                        }
-                    });
+                    handleCheckboxUnchecked(selectedFilters, underFiltersContainer, filter)
                 }
             });
         })
+
+
     }
     return filterWrapper
 }
 
+function handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, filterTitle, catId, checkBox) {
+    selectedFilters.forEach(filterName => {
+        const filterNameDiv = document.createElement("div"); // Ändra till att skapa en div istället för en paragraph
+        filterNameDiv.classList.add("filterNameDiv"); // Använd en klass för den nya div-en
+        filterNameDiv.innerHTML = `
+    ${filterName} <i class="fa-solid fa-xmark"></i>`;
+        filterNameDiv.querySelector('.fa-xmark').addEventListener('click', () => {
+            // Hitta det överordnade filternamnsdiv-elementet och ta bort det
+            filterNameDiv.parentNode.removeChild(filterNameDiv);
+            // Ta bort filter från valda filter
+            const index = selectedFilters.indexOf(filter.name);
+            if (index !== -1) {
+                selectedFilters.splice(index, 1);
+            }
+            // Ta bort filtrering för detta filter
+            filterOnCheckedItems(filterTitle, filter.id, "delete", catId);
+            checkBox.checked = false;
+        });
+        underFiltersContainer.appendChild(filterNameDiv);
+    });
+}
+
+function handleCheckboxUnchecked(selectedFilters, underFiltersContainer, filter) {
+    const filterNameDivs = underFiltersContainer.querySelectorAll(`.filterNameDiv`); // Ändra selektorn för att välja divs istället för paragrafer
+    filterNameDivs.forEach(div => {
+        if (div.textContent.trim() === filter.name) {
+            underFiltersContainer.removeChild(div);
+            // Ta bort filternamnet från arrayen av valda filter
+            const index = selectedFilters.indexOf(filter.name);
+            if (index !== -1) {
+                selectedFilters.splice(index, 1);
+            }
+        }
+    });
+
+}
 
 let filterItems = [{
         title: "style",
@@ -471,9 +488,35 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
     }
 
     let products = await getFilteredProducts(catId, searchString)
+        // createFilterCount(catId)
     document.getElementById("wrapper").innerHTML = ""
     fillpage(products)
 }
+
+// function createFilterCount(catId) {
+//     let underFilter = document.getElementById("under-filters")
+//     let clearButton = document.createElement("p")
+//     clearButton.innerHTML = "Clear all"
+
+//     clearButton.addEventListener("click", async() => {
+//         let allInputs = Array.from(document.querySelectorAll("input"))
+//         let checkedInputs = allInputs.filter(input => input.checked == true)
+//         checkedInputs.forEach(input => {
+//             input.checked = false
+//         })
+//         filterItems.forEach(filter => {
+//             filter.checkedItems = []
+//         })
+
+//         let products = await getProductsByCatId(catId)
+//         document.getElementById("wrapper").innerHTML = ""
+//         fillpage(products)
+//         createFilterCount(0, catId)
+
+//     })
+
+//     underFilter.append(clearButton)
+// }
 
 
 // async function createFilterType(type) {
