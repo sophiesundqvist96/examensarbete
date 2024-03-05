@@ -5,7 +5,7 @@ import {fillpage } from "../utils/index.js"
 createNav()
 createBottonListenWoM()
 
-async function createNav(){
+export async function createNav(){
     let navTitles = [
         {
             title: "New In",
@@ -48,6 +48,7 @@ async function createNav(){
                 }
                 
                 products = await getProductsByCatId(id)
+                console.log(products)
                 await createAllFilters(id)
                 fillpage(products) 
             } )
@@ -98,7 +99,7 @@ function changeToWomen(){
     } 
 }
 
-function createBottonListenWoM(){
+export function createBottonListenWoM(){
     let womenButton = document.getElementById("women")
     let menButton = document.getElementById("men")
     womenButton.addEventListener("click", changeToWomen)
@@ -144,7 +145,7 @@ function createCategories(allCategories){
         }
         categori.addEventListener("click", async () =>{
             document.getElementById("hover-div").classList.add("hidden")
-            await createAllFilters(cat.categoryId)
+            await createAllFilters(cat.categoryId, cat.title)
             let products = await getProductsByCatId(cat.categoryId)
             fillpage(products)
         })
@@ -155,10 +156,11 @@ function createCategories(allCategories){
     return catWrapper
 }
 
-async function createAllFilters(catId){
+async function createAllFilters(catId, title){
     let filterTypes = ["style", "color", "brand", "size"] // avkommenterat för att ta mindre fetch medan jag stylar
     let allFilterWrapper = document.getElementById("all-filters")
     allFilterWrapper.innerHTML = ""
+    createPageTitle(title)
 
     // Skapa en array för att lagra alla asynkrona anrop
     let asyncFilterPromises = filterTypes.map(async filter => {
@@ -174,6 +176,17 @@ async function createAllFilters(catId){
     filterWrappers.forEach(filterWrapper => {
         allFilterWrapper.appendChild(filterWrapper);
     });
+}
+
+function createPageTitle(title){
+    let gender;
+    if(document.getElementById("navigation").classList.contains("men")){
+        gender = "Men"
+    }else{
+        gender = "Women"
+    }
+    let titleDiv = document.getElementById("cat-title")
+    titleDiv.innerHTML = `<h1>${title} For ${gender}</h1>`
 }
 
 function createFilters(arrayOfFilters, filterTitle, catId){
@@ -278,7 +291,6 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId){
 
     let products = await getFilteredProducts(catId, searchString)
     createFilterCount(filterAmount, catId)
-    document.getElementById("wrapper").innerHTML = ""
     fillpage(products)
 }
 
@@ -302,7 +314,6 @@ function createFilterCount(count, catId){
         })
 
         let products = await getProductsByCatId(catId)
-        document.getElementById("wrapper").innerHTML = ""
         fillpage(products)
         createFilterCount(0 , catId)
 

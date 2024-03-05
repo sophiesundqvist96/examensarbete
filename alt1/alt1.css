@@ -2,7 +2,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 160px;
+    padding-top: 20px;
+    padding-bottom: 60px;
 }
 
 .filter-wrapper{
@@ -65,4 +66,15 @@
 
 #count-wrapper > p:hover{
     cursor: pointer;
+}
+
+#all-filters-wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#cat-title{
+    padding-top: 20px;
 }
