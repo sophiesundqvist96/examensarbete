@@ -1,4 +1,3 @@
-import { getProductsByCatId} from "./api.js"
 
 
 function createProduct(product){
@@ -24,9 +23,14 @@ function createProduct(product){
 
 export function fillpage(products){
     let wrapper = document.getElementById("wrapper")
+    wrapper.innerHTML = ""
 
     products.forEach(product => {
         let productDiv = createProduct(product)
+        console.log(product)
+        productDiv.addEventListener("click", () =>{
+            window.location.href = `http://localhost:8888/product/product.html?product=${product.url}`
+        })
         wrapper.append(productDiv)
     });
 
