@@ -47,10 +47,13 @@ export async function createNav(){
                    id = title.id.men
                 }
                 
-                products = await getProductsByCatId(id)
+                products = await getProductsByCatId(id ,1)
                 console.log(products)
                 await createAllFilters(id)
+                let wrapper = document.getElementById("wrapper")
+                wrapper.innerHTML = ""
                 fillpage(products) 
+                createShowMore(id, 1)
             } )
         }else{
             let data;
@@ -146,8 +149,11 @@ function createCategories(allCategories){
         categori.addEventListener("click", async () =>{
             document.getElementById("hover-div").classList.add("hidden")
             await createAllFilters(cat.categoryId, cat.title)
-            let products = await getProductsByCatId(cat.categoryId)
+            let products = await getProductsByCatId(cat.categoryId, 1)
+            let wrapper = document.getElementById("wrapper")
+            wrapper.innerHTML = ""
             fillpage(products)
+            createShowMore(cat.categoryId, 1)
         })
     })
     
@@ -289,9 +295,12 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId){
         }
     }
 
-    let products = await getFilteredProducts(catId, searchString)
+    let products = await getFilteredProducts(catId, searchString, 1)
     createFilterCount(filterAmount, catId)
+    let wrapper = document.getElementById("wrapper")
+    wrapper.innerHTML = ""
     fillpage(products)
+    createShowMore(catId, 1, searchString)
 }
 
 function createFilterCount(count, catId){
@@ -313,11 +322,50 @@ function createFilterCount(count, catId){
             filter.checkedItems = []
         })
 
-        let products = await getProductsByCatId(catId)
+        let products = await getProductsByCatId(catId, 1)
+        let wrapper = document.getElementById("wrapper")
+        wrapper.innerHTML = ""
         fillpage(products)
+        createShowMore(catId, 1)
         createFilterCount(0 , catId)
-
     })
 
-    countWrapper.append(clearButton, counter)
+    countWrapper.append(clearButton, counter, "")
 }
+
+async function createShowMore(catId, counter, searchString = null){
+    let btnBox = document.createElement('div')
+    btnBox.id = 'btnBox'
+    let btn = document.createElement('div')
+    btn.innerHTML = `<i class="fa-solid fa-angles-down"></i>`
+    btn.classList.add('showMore')
+    btnBox.appendChild(btn)
+  
+    let wrapper = document.getElementById('content')
+    wrapper.append(btnBox)
+  
+    // this is a function that observe btn, if whole btn is fully vissible on screen dvs, (btnEntrie.isIntersecting == true) then more movies will load to page
+    let observer = new IntersectionObserver(
+      async entries => {
+        let btnEntrie = entries[0]
+  
+        if (!btnEntrie.isIntersecting) return
+        counter++
+        let products
+        if(searchString == null){
+            products = await getProductsByCatId(catId, counter)
+        }else{
+            products = await getFilteredProducts(catId, searchString, counter)
+        }
+
+        fillpage(products)
+      },
+      {
+        // threshold is used to observe if btn is fully vissible on screen, 1 = 100%
+        threshold: 1
+      }
+    )
+  
+    observer.observe(btn)
+  }
+  

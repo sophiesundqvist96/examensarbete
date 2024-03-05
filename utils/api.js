@@ -21,8 +21,8 @@ export const catData = await getCategories()
 
 
 // returnera en array av producter baserat på kategori-id (cid)
-export async function getProductsByCatId(catId) {
-    const url = `https://asos-com1.p.rapidapi.com/products/search-by-category?cid=${catId}`;
+export async function getProductsByCatId(catId, page) {
+    const url = `https://asos-com1.p.rapidapi.com/products/search-by-category?cid=${catId}&page=${page}`;
     const options = {
         method: 'GET',
         headers: {
@@ -62,8 +62,8 @@ export async function getFilter(filterType, catId) {
 }
 
 
-export async function getFilteredProducts(catId, filterstring) {
-    const url = `https://asos-com1.p.rapidapi.com/products/search-by-category?cid=${catId}&${filterstring}`;
+export async function getFilteredProducts(catId, filterstring, page) {
+    const url = `https://asos-com1.p.rapidapi.com/products/search-by-category?cid=${catId}&${filterstring}&page=${page}`;
     const options = {
         method: 'GET',
         headers: {

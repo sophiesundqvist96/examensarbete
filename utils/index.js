@@ -23,8 +23,6 @@ function createProduct(product){
 
 export function fillpage(products){
     let wrapper = document.getElementById("wrapper")
-    wrapper.innerHTML = ""
-
     products.forEach(product => {
         let productDiv = createProduct(product)
         console.log(product)
@@ -33,8 +31,6 @@ export function fillpage(products){
         })
         wrapper.append(productDiv)
     });
-
-    document.getElementById("alt1").append(wrapper)
 }
 
 //fillpage()
