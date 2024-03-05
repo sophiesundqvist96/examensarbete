@@ -1,78 +1,7 @@
 import { catData, getProductsByCatId, getFilter, getFilteredProducts } from "../utils/api.js";
 import { fillpage } from "../utils/index.js"
 
-
-
 createNav()
-    // createBottonListenWoM()
-
-// function getNavDataWom() {
-//     let wayToClothingCats = catData.Women.children[4].children[3].children[1].children
-//     let newIn = wayToClothingCats[2]
-//     let bestsellers = wayToClothingCats[1]
-//     let clothing = catData.Women.children[4].children[3]
-//     let shoes = catData.Women.children[4].children[5];
-//     let accessories = catData.Women.children[4].children[8];
-//     let brands = catData.Women.children[4].children[9];
-//     let sale = catData.Women.children[4].children[0]
-
-//     let navData = [newIn, bestsellers, clothing, shoes, accessories, brands, sale]
-//     return navData
-
-// }
-
-// function getNavDataMen() {
-//     let wayToClothingCats = catData.Men.children[4].children[3].children[1].children
-
-//     let newIn = wayToClothingCats[2]
-//     let bestsellers = wayToClothingCats[1]
-//     let clothing = catData.Men.children[4].children[3]
-//     let shoes = catData.Men.children[4].children[5];
-//     let accessories = catData.Men.children[4].children[8];
-//     let brands = catData.Men.children[4].children[9];
-//     let sale = catData.Men.children[4].children[1]
-
-//     let navData = [newIn, bestsellers, clothing, shoes, accessories, brands, sale]
-//     return navData
-// }
-
-// just nu hårdkodas vägen här men det behövs ändras eftersom vägen ser olika ut beroende på män eller kvinna
-// async function createNav(navData) {
-//     console.log(navData)
-//     navData.forEach(titleData => {
-//         console.log(titleData)
-//         let titleDiv = document.createElement("div")
-//         titleDiv.classList.add("nav-title")
-//         titleDiv.innerHTML = titleData.title
-//         if (titleData.title != "Clothing") {
-//             titleDiv.addEventListener("click", async() => {
-//                 document.getElementById("wrapper").innerHTML = ""
-//                 switch (titleData.title) {
-//                     case "New in":
-//                     case "Bestsellers":
-//                         await fillpage(titleData.categoryId)
-//                         break;
-//                     case "Sale":
-//                         fillpage(28250) // detta är såå hårdkodat, måsta komma på ett bättre sätt 
-//                         break;
-//                 }
-//             })
-
-//         } else {
-//             createHoverDiv(titleDiv, catData)
-//             titleDiv.addEventListener("mouseenter", () => {
-//                 // document.getElementById("hover-div").classList.remove("hidden")
-//             })
-
-//             titleDiv.addEventListener("mouseleave", () => {
-//                 // document.getElementById("hover-div").classList.add("hidden")
-//             })
-//         }
-
-//         document.getElementById("navigation").append(titleDiv)
-//     })
-
-// }
 
 async function createNav() {
     let navTitles = [{
@@ -134,39 +63,6 @@ async function createNav() {
 
 }
 
-// för att ändra till män och kvinnor.. create nav är dock hårdkodad efter kvinnor så den behöver ändras
-// function changeToMen() {
-//     let navWrapper = document.getElementById("navigation")
-//     if (navWrapper.classList.contains("women")) {
-//         // här borde också läggas till att man kommer till "första sidan" som är anpassad för män
-//         navWrapper.innerHTML = ""
-//         navWrapper.classList.remove("women")
-//         navWrapper.classList.add("men")
-//         let menNavData = getNavDataMen()
-//         createNav(menNavData)
-//     }
-// }
-
-// function changeToWomen() {
-//     let navWrapper = document.getElementById("navigation")
-//     if (navWrapper.classList.contains("men")) {
-//         navWrapper.innerHTML = ""
-//             // här borde också läggas till att man kommer till "första sidan" som är anpassad för kvinnor
-//         navWrapper.classList.remove("men")
-//         navWrapper.classList.add("women")
-//         let wommenNavData = getNavDataWom()
-//         createNav(wommenNavData)
-
-//     }
-// }
-
-// function createBottonListenWoM() {
-//     let womenButton = document.getElementById("women")
-//     let menButton = document.getElementById("men")
-//     womenButton.addEventListener("click", changeToWomen)
-//     menButton.addEventListener("click", changeToMen)
-// }
-
 function createHoverDiv(titleDiv, catData) {
     let hoverDiv = document.createElement("div");
     hoverDiv.id = "hover-div";
@@ -210,10 +106,7 @@ function createCategories(womenData, menData) {
         category.innerHTML = cat.title;
         category.addEventListener("click", async() => {
             document.getElementById("hover-div").classList.add("hidden")
-            await createAllFilters(cat.categoryId)
-            products = await getProductsByCatId(cat.categoryId)
-            fillpage(products)
-
+            fillPageFilterWomen(cat, womenData, "Women")
         });
         if (i < 18) {
             womenDiv1.appendChild(category);
@@ -237,9 +130,8 @@ function createCategories(womenData, menData) {
         category.innerHTML = cat.title;
         category.addEventListener("click", async() => {
             document.getElementById("hover-div").classList.add("hidden")
-            await createAllFilters(cat.categoryId)
-            products = await getProductsByCatId(cat.categoryId)
-            fillpage(products)
+            fillPageFilterMen(cat, menData)
+
 
         });
         if (i < 18) {
@@ -258,49 +150,51 @@ function createCategories(womenData, menData) {
     return catWrapper;
 }
 
+async function fillPageFilterWomen(cat, womenData) {
+    await createAllFilters(cat.categoryId)
+    let products = await getProductsByCatId(cat.categoryId)
+    fillpage(products)
+    createTypeHeader(cat.title, "Women")
+    createSideFilters(womenData, cat, "Women")
+}
 
+async function fillPageFilterMen(cat, menData) {
+    await createAllFilters(cat.categoryId)
+    let products = await getProductsByCatId(cat.categoryId)
+    fillpage(products)
+    createTypeHeader(cat.title, "Men")
+    createSideFilters(menData, cat, "Men")
+}
 
-// function createCategoriesMen(allCategories) {
-//     console.log(allCategories)
-//     let catWrapper = document.createElement("div")
-//     catWrapper.id = "cat-wrapper"
+function createTypeHeader(productType, gender) {
+    let typeOfProduct = document.getElementById("type");
+    let typeHeader = document.createElement("h3");
+    typeHeader.classList.add("typeHeader")
 
-//     let div1 = document.createElement("div")
-//     let div2 = document.createElement("div")
-//     let i = 0;
-//     allCategories.forEach(cat => {
-//         i++
-//         let categori = document.createElement("p")
-//         categori.innerHTML = cat.title
-//         if (i < 18) {
-//             div1.appendChild(categori)
-//         } else {
-//             div2.appendChild(categori)
-//         }
-//         categori.addEventListener("click", () => {
-//             fillpage(cat.categoryId)
-//                 // document.getElementById("hover-div").classList.add("hidden")
-//             createFilterType(cat.title)
-//         })
-//     })
-
-//     catWrapper.appendChild(div1)
-//     catWrapper.appendChild(div2)
-//     return catWrapper
-// }
+    let typeText = "";
+    if (gender === "Women") {
+        typeText += "Women's ";
+    } else if (gender === "Men") {
+        typeText += "Men's ";
+    }
+    typeText += productType;
+    typeHeader.innerHTML = typeText;
+    typeOfProduct.appendChild(typeHeader);
+}
 
 async function createAllFilters(catId) {
-    let filterTypes = ["style", "color", "brand", "size", "design"]
+
+    //Style ska inte finnas här bara i sidefilter sen!
+    let filterTypes = ["style"]
+
+    // , "color", "brand", "size", "design"]
 
     // , "body-fit", "discount", "range", "price-range"] // avkommenterat för att ta mindre fetch medan jag stylar
 
     let allFilterContainer = document.getElementById("all-filters-container")
-
-
     let allFilterWrapper = document.getElementById("all-filters")
     allFilterWrapper.innerHTML = ""
 
-    // Skapa en array för att lagra alla asynkrona anrop
     let asyncFilterPromises = filterTypes.map(async filter => {
         let arrayOfFilters = await getFilter(filter, catId); // Vänta på att getFilter ska slutföras
         let filterWrapper = createFilters(arrayOfFilters, filter, catId);
@@ -310,119 +204,13 @@ async function createAllFilters(catId) {
         return filterWrapper;
     });
 
-    // Vänta på att alla asynkrona anrop ska slutföras innan du fortsätter
     let filterWrappers = await Promise.all(asyncFilterPromises);
 
-    // Lägg till alla filterWrappers till allFilterWrapper
     filterWrappers.forEach(filterWrapper => {
         allFilterContainer.appendChild(filterWrapper);
     });
 
     allFilterContainer.appendChild(allFilterWrapper)
-}
-
-function createFilters(arrayOfFilters, filterTitle, catId) {
-    let filterWrapper = document.createElement("div")
-    filterWrapper.classList.add("filter-wrapper")
-
-    let buttonDiv = document.createElement("div")
-    buttonDiv.innerHTML = `
-        <div>${filterTitle.charAt(0).toUpperCase() + filterTitle.slice(1)}</div>
-        <i class="fa-solid fa-angle-down"></i>`
-
-    buttonDiv.addEventListener("click", () => {
-        let content = buttonDiv.parentNode.querySelector(".dropdown-content");
-        if (content.style.display === "block") {
-            content.style.display = "none";
-            buttonDiv.querySelector("i").classList.add("fa-angle-down")
-            buttonDiv.querySelector("i").classList.remove("fa-angle-up")
-
-        } else {
-            content.style.display = "block";
-            buttonDiv.querySelector("i").classList.remove("fa-angle-down")
-            buttonDiv.querySelector("i").classList.add("fa-angle-up")
-        }
-    })
-
-    let dropdownWrapper = document.createElement("div")
-    dropdownWrapper.classList.add("dropdown-content")
-
-    filterWrapper.append(buttonDiv, dropdownWrapper)
-
-    if (arrayOfFilters != null) { /// om den är null måsta vi göra något annat för att visa att det inte finns fler alternativ
-        arrayOfFilters.forEach(filter => {
-            let option = document.createElement("div")
-                // för namnet på filtert
-            let filterDiv = document.createElement("div")
-            filterDiv.innerHTML = filter.name
-
-            //checkBox för att tryck i ett alternativ
-            let checkBox = document.createElement("input")
-            checkBox.setAttribute("type", "checkbox");
-
-            option.append(filterDiv, checkBox)
-            dropdownWrapper.append(option)
-
-            // här ska det sorteras när man trycker i rutan istället
-            const underFiltersContainer = document.getElementById('under-filters');
-            let selectedFilters = []; // Array för att lagra valda filternamn
-
-
-            checkBox.addEventListener("click", () => {
-                if (checkBox.checked) {
-                    filterOnCheckedItems(filterTitle, filter.id, "add", catId);
-                    // Lägg till filternamnet i arrayen av valda filter
-                    selectedFilters.push(filter.name);
-                    handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, filterTitle, catId, checkBox)
-
-                    // Lägg till den gemensamma <div>-elementet i behållaren
-                } else {
-                    filterOnCheckedItems(filterTitle, filter.id, "delete", catId);
-                    handleCheckboxUnchecked(selectedFilters, underFiltersContainer, filter)
-                }
-            });
-        })
-
-
-    }
-    return filterWrapper
-}
-
-function handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, filterTitle, catId, checkBox) {
-    selectedFilters.forEach(filterName => {
-        const filterNameDiv = document.createElement("div"); // Ändra till att skapa en div istället för en paragraph
-        filterNameDiv.classList.add("filterNameDiv"); // Använd en klass för den nya div-en
-        filterNameDiv.innerHTML = `
-    ${filterName} <i class="fa-solid fa-xmark"></i>`;
-        filterNameDiv.querySelector('.fa-xmark').addEventListener('click', () => {
-            // Hitta det överordnade filternamnsdiv-elementet och ta bort det
-            filterNameDiv.parentNode.removeChild(filterNameDiv);
-            // Ta bort filter från valda filter
-            const index = selectedFilters.indexOf(filter.name);
-            if (index !== -1) {
-                selectedFilters.splice(index, 1);
-            }
-            // Ta bort filtrering för detta filter
-            filterOnCheckedItems(filterTitle, filter.id, "delete", catId);
-            checkBox.checked = false;
-        });
-        underFiltersContainer.appendChild(filterNameDiv);
-    });
-}
-
-function handleCheckboxUnchecked(selectedFilters, underFiltersContainer, filter) {
-    const filterNameDivs = underFiltersContainer.querySelectorAll(`.filterNameDiv`); // Ändra selektorn för att välja divs istället för paragrafer
-    filterNameDivs.forEach(div => {
-        if (div.textContent.trim() === filter.name) {
-            underFiltersContainer.removeChild(div);
-            // Ta bort filternamnet från arrayen av valda filter
-            const index = selectedFilters.indexOf(filter.name);
-            if (index !== -1) {
-                selectedFilters.splice(index, 1);
-            }
-        }
-    });
-
 }
 
 let filterItems = [{
@@ -463,6 +251,146 @@ let filterItems = [{
     }
 ]
 
+function createFilters(arrayOfFilters, filterTitle, catId) {
+
+    let filterWrapper = document.createElement("div")
+    filterWrapper.classList.add("filter-wrapper")
+
+    let buttonDiv = document.createElement("div")
+    buttonDiv.innerHTML = `
+        <div>${filterTitle.charAt(0).toUpperCase() + filterTitle.slice(1)}</div>
+        <i class="fa-solid fa-angle-down"></i>`
+
+    buttonDiv.addEventListener("click", () => {
+        let content = buttonDiv.parentNode.querySelector(".dropdown-content");
+        if (content.style.display === "block") {
+            content.style.display = "none";
+            buttonDiv.querySelector("i").classList.add("fa-angle-down")
+            buttonDiv.querySelector("i").classList.remove("fa-angle-up")
+
+        } else {
+            content.style.display = "block";
+            buttonDiv.querySelector("i").classList.remove("fa-angle-down")
+            buttonDiv.querySelector("i").classList.add("fa-angle-up")
+        }
+    })
+
+    let dropdownWrapper = document.createElement("div")
+    dropdownWrapper.classList.add("dropdown-content")
+
+    filterWrapper.append(buttonDiv, dropdownWrapper)
+
+    if (arrayOfFilters != null) {
+        arrayOfFilters.forEach(filter => {
+            let option = document.createElement("div")
+
+            let filterDiv = document.createElement("div")
+            filterDiv.innerHTML = filter.name
+
+            let checkBox = document.createElement("input")
+            checkBox.setAttribute("type", "checkbox");
+
+            option.append(filterDiv, checkBox)
+            dropdownWrapper.append(option)
+
+            const underFiltersContainer = document.getElementById('under-filters');
+            let selectedFilters = [];
+
+
+            checkBox.addEventListener("click", () => {
+                if (checkBox.checked) {
+                    filterOnCheckedItems(filterTitle, filter.id, "add", catId);
+
+                    selectedFilters.push(filter.name);
+                    handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, filterTitle, catId, checkBox)
+
+                } else {
+                    filterOnCheckedItems(filterTitle, filter.id, "delete", catId);
+                    handleCheckboxUnchecked(selectedFilters, underFiltersContainer, filter)
+                }
+            });
+        })
+
+
+    }
+    return filterWrapper
+}
+
+function handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, filterTitle, catId, checkBox) {
+
+    let clearButton = underFiltersContainer.querySelector(".clear-button");
+
+    if (!clearButton) {
+        clearButton = document.createElement("p");
+        clearButton.classList.add("clear-button");
+        clearButton.innerHTML = "Clear all";
+        underFiltersContainer.appendChild(clearButton);
+    }
+
+    clearButton.addEventListener("click", async() => {
+        clearFilters(selectedFilters, underFiltersContainer, catId)
+    });
+
+
+    selectedFilters.forEach(filterName => {
+        const filterNameDiv = document.createElement("div");
+        filterNameDiv.classList.add("filterNameDiv");
+        filterNameDiv.innerHTML = `
+    ${filterName} <i class="fa-solid fa-xmark"></i>`;
+        filterNameDiv.querySelector('.fa-xmark').addEventListener('click', () => {
+
+            filterNameDiv.parentNode.removeChild(filterNameDiv);
+            const index = selectedFilters.indexOf(filter.name);
+            if (index !== -1) {
+                selectedFilters.splice(index, 1);
+            }
+
+            filterOnCheckedItems(filterTitle, filter.id, "delete", catId);
+            checkBox.checked = false;
+        });
+        underFiltersContainer.appendChild(filterNameDiv);
+    });
+
+}
+
+function handleCheckboxUnchecked(selectedFilters, underFiltersContainer, filter) {
+    const filterNameDivs = underFiltersContainer.querySelectorAll(`.filterNameDiv`); // Ändra selektorn för att välja divs istället för paragrafer
+    filterNameDivs.forEach(div => {
+        if (div.textContent.trim() === filter.name) {
+            underFiltersContainer.removeChild(div);
+            // Ta bort filternamnet från arrayen av valda filter
+            const index = selectedFilters.indexOf(filter.name);
+            if (index !== -1) {
+                selectedFilters.splice(index, 1);
+            }
+        }
+    });
+
+}
+
+async function clearFilters(selectedFilters, underFiltersContainer, catId) {
+
+    selectedFilters.splice(0, selectedFilters.length); // Detta kommer att tömma hela arrayen
+    console.log(selectedFilters)
+
+    let allInputs = Array.from(document.querySelectorAll("input"));
+    let checkedInputs = allInputs.filter(input => input.checked == true);
+    checkedInputs.forEach(input => {
+        input.checked = false;
+    });
+
+    filterItems.forEach(filter => {
+        filter.checkedItems = [];
+    });
+
+    underFiltersContainer.innerHTML = "";
+
+    let products = await getProductsByCatId(catId);
+    document.getElementById("wrapper").innerHTML = "";
+    fillpage(products);
+}
+
+
 async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
     if (addOrdDelete == "add") {
         filterItems.find(item => item.title == title).checkedItems.push(checkedItem)
@@ -471,7 +399,7 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
     }
 
     let filter = filterItems.filter(item => item.checkedItems.length > 0)
-
+    console.log(filter)
     let searchString = ""
     for (let i = 0; i < filter.length; i++) {
         if (i > 0) {
@@ -483,48 +411,92 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
             if (j > 0) {
                 searchString += ","
             }
+            console.log(filter[i].checkedItems[j])
+
             searchString += filter[i].checkedItems[j]
         }
     }
 
+    console.log(catId)
+    console.log(searchString)
     let products = await getFilteredProducts(catId, searchString)
-        // createFilterCount(catId)
     document.getElementById("wrapper").innerHTML = ""
     fillpage(products)
 }
 
-// function createFilterCount(catId) {
-//     let underFilter = document.getElementById("under-filters")
-//     let clearButton = document.createElement("p")
-//     clearButton.innerHTML = "Clear all"
-
-//     clearButton.addEventListener("click", async() => {
-//         let allInputs = Array.from(document.querySelectorAll("input"))
-//         let checkedInputs = allInputs.filter(input => input.checked == true)
-//         checkedInputs.forEach(input => {
-//             input.checked = false
-//         })
-//         filterItems.forEach(filter => {
-//             filter.checkedItems = []
-//         })
-
-//         let products = await getProductsByCatId(catId)
-//         document.getElementById("wrapper").innerHTML = ""
-//         fillpage(products)
-//         createFilterCount(0, catId)
-
-//     })
-
-//     underFilter.append(clearButton)
-// }
+async function createSideFilters(catData, cat, gender) {
+    console.log(catData);
+    console.log(cat);
+    const mainWrapper = document.getElementById("main-wrapper");
+    const wrapper = document.getElementById("wrapper");
+    const underFiltes = document.getElementById("under-filters");
+    const typeHeader = document.getElementsByClassName("typeHeader");
+    mainWrapper.innerHTML = "";
 
 
-// async function createFilterType(type) {
-//     let filterWrapper = document.createElement("div")
-//     filterWrapper.classList.add("filter-wrapper")
-//     let allTypeFilter = await getFiltersType(type)
-//     allTypeFilter.forEach(type => {
-//         let typDiv = document.createElement("div")
-//         typDiv.innerHTML = type.name
-//     })
-// }
+    catData.forEach(async category => {
+        let catTitle = document.createElement("div");
+        catTitle.classList.add("sideFilterName");
+        catTitle.innerHTML = category.title;
+
+        // Lägg till en klickhändelselyssnare för att ladda produkter för den valda kategorin och uppdatera sidofilter
+        catTitle.addEventListener("click", async() => {
+            console.log(category);
+            wrapper.innerHTML = "";
+            underFiltes.innerHTML = "";
+            typeHeader.innerHTML = "";
+            // Hämta produkter för den valda kategorin
+
+            if (gender == "Women") {
+                fillPageFilterWomen(category, catData); // Skicka med den nya kategorin
+
+            } else if (gender == "Men") {
+                fillPageFilterMen(category, catData);
+            }
+            // Uppdatera sidofilter
+            createSideFilters(catData, category);
+        });
+
+        let catList = document.createElement("ul"); // Skapa en lista för underkategorierna
+
+        if (cat.categoryId == category.categoryId) {
+            let filterTypes = ["style"];
+            let asyncFilterPromises = filterTypes.map(async filter => {
+                let arrayOfFilters = await getFilter(filter, cat.categoryId);
+                console.log(arrayOfFilters);
+                if (arrayOfFilters) {
+                    arrayOfFilters.forEach(type => {
+                        let type_li = document.createElement("li"); // Skapa ett listelement för varje underkategori
+                        type_li.classList.add("sideFilterType");
+                        type_li.innerHTML = type.name;
+
+                        catList.appendChild(type_li);
+
+                        type_li.addEventListener("click", async() => {
+                            handleSideFilter(type)
+                        })
+                    });
+                }
+            })
+        }
+        catTitle.appendChild(catList); // Lägg till listan av underkategorier under kategoridiv
+        mainWrapper.appendChild(catTitle);
+
+    });
+}
+
+async function handleSideFilter(type) {
+    console.log(type.id);
+
+    // Skapa söksträngen för filtret "style"
+    let searchString = "style=" + type.id;
+
+    // Hämta filtrerade produkter baserat på kategorins ID och söksträngen för filtret "style"
+    let products = await getFilteredProducts(type.id, "Dresses");
+
+    // Töm innehållet i wrapper-elementet för att förbereda det för de nya filtrerade produkterna
+    document.getElementById("wrapper").innerHTML = "";
+
+    // Fyll sidan med de filtrerade produkterna
+    fillpage(products);
+}
