@@ -180,3 +180,14 @@
     gap: 10px;
     margin-bottom: 30px;
 }
+
+#type {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 20vh;
+}
+
+.sideFilterName ul {
+    list-style-type: none;
+}

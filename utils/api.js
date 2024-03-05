@@ -1,4 +1,4 @@
-export async function getCategories(){
+export async function getCategories() {
     const url = 'https://asos-com1.p.rapidapi.com/categories/list-shortened';
     const options = {
         method: 'GET',
@@ -21,7 +21,7 @@ export const catData = await getCategories()
 
 
 // returnera en array av producter baserat på kategori-id (cid)
-export async function getProductsByCatId(catId){
+export async function getProductsByCatId(catId) {
     const url = `https://asos-com1.p.rapidapi.com/products/search-by-category?cid=${catId}`;
     const options = {
         method: 'GET',
@@ -30,7 +30,7 @@ export async function getProductsByCatId(catId){
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
-    
+
     try {
         const response = await fetch(url, options);
         const result = await response.json();
@@ -41,7 +41,7 @@ export async function getProductsByCatId(catId){
     }
 }
 
-export async function getFilter(filterType, catId){
+export async function getFilter(filterType, catId) {
     const url = `https://asos-com1.p.rapidapi.com/filters/${filterType}?q=${catId}&search_type=ByCategory`;
     const options = {
 	    method: 'GET',
@@ -62,7 +62,7 @@ export async function getFilter(filterType, catId){
 }
 
 
-export async function getFilteredProducts(catId, filterstring){
+export async function getFilteredProducts(catId, filterstring) {
     const url = `https://asos-com1.p.rapidapi.com/products/search-by-category?cid=${catId}&${filterstring}`;
     const options = {
         method: 'GET',
@@ -71,7 +71,7 @@ export async function getFilteredProducts(catId, filterstring){
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
-    
+
     try {
         const response = await fetch(url, options);
         const result = await response.json();
