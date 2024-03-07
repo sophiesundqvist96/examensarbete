@@ -60,10 +60,10 @@
 
 #hover-div {
     position: absolute;
-    top: 50px;
-    width: 60vw;
+    top: 170px;
+    /* width: 60vw; */
     background-color: lightgray;
-    left: -200px;
+    /* left: -200px; */
     padding: 40px;
     z-index: 3;
 }
@@ -119,6 +119,7 @@
 
 .filter-wrapper {
     position: relative;
+    /* Gör filtreringsrubriken relativ till sitt förälderelement */
     display: inline-block;
     min-width: 160px;
     border-top: 0.5px solid;
@@ -190,4 +191,20 @@
 
 .sideFilterName ul {
     list-style-type: none;
+    padding-left: 20px;
+}
+
+#main-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+}
+
+.sideFilterName {
+    padding-left: 15px;
+}
+
+.sideFilterType {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    font-size: small;
 }

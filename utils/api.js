@@ -3,7 +3,7 @@ export async function getCategories() {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '31d61d0eb1msh3067d7e7e785ffdp15adddjsnf38d21b60f0e',
+            'X-RapidAPI-Key': '965e9df12bmshe96076c8a42874ap1b377ejsn6e6fdd89f4d1',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -26,7 +26,7 @@ export async function getProductsByCatId(catId, page) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '31d61d0eb1msh3067d7e7e785ffdp15adddjsnf38d21b60f0e',
+            'X-RapidAPI-Key': '965e9df12bmshe96076c8a42874ap1b377ejsn6e6fdd89f4d1',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -44,11 +44,13 @@ export async function getProductsByCatId(catId, page) {
 export async function getFilter(filterType, catId) {
     const url = `https://asos-com1.p.rapidapi.com/filters/${filterType}?q=${catId}&search_type=ByCategory`;
     const options = {
-	    method: 'GET',
-	    headers: {
-		    'X-RapidAPI-Key': '31d61d0eb1msh3067d7e7e785ffdp15adddjsnf38d21b60f0e',
-		    'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
-	    }
+
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': '965e9df12bmshe96076c8a42874ap1b377ejsn6e6fdd89f4d1',
+            'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
+        }
+
     };
 
     try {
@@ -67,7 +69,7 @@ export async function getFilteredProducts(catId, filterstring, page) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '31d61d0eb1msh3067d7e7e785ffdp15adddjsnf38d21b60f0e',
+            'X-RapidAPI-Key': '965e9df12bmshe96076c8a42874ap1b377ejsn6e6fdd89f4d1',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
