@@ -5,7 +5,7 @@ import {fillpage } from "../utils/index.js"
 createNav()
 createBottonListenWoM()
 
-async function createNav(){
+export async function createNav(){
     let navTitles = [
         {
             title: "New In",
@@ -47,9 +47,13 @@ async function createNav(){
                    id = title.id.men
                 }
                 
-                products = await getProductsByCatId(id)
+                products = await getProductsByCatId(id ,1)
+                console.log(products)
                 await createAllFilters(id)
+                let wrapper = document.getElementById("wrapper")
+                wrapper.innerHTML = ""
                 fillpage(products) 
+                createShowMore(id, 1)
             } )
         }else{
             let data;
@@ -98,7 +102,7 @@ function changeToWomen(){
     } 
 }
 
-function createBottonListenWoM(){
+export function createBottonListenWoM(){
     let womenButton = document.getElementById("women")
     let menButton = document.getElementById("men")
     womenButton.addEventListener("click", changeToWomen)
@@ -144,9 +148,12 @@ function createCategories(allCategories){
         }
         categori.addEventListener("click", async () =>{
             document.getElementById("hover-div").classList.add("hidden")
-            await createAllFilters(cat.categoryId)
-            let products = await getProductsByCatId(cat.categoryId)
+            await createAllFilters(cat.categoryId, cat.title)
+            let products = await getProductsByCatId(cat.categoryId, 1)
+            let wrapper = document.getElementById("wrapper")
+            wrapper.innerHTML = ""
             fillpage(products)
+            createShowMore(cat.categoryId, 1)
         })
     })
     
@@ -155,10 +162,11 @@ function createCategories(allCategories){
     return catWrapper
 }
 
-async function createAllFilters(catId){
+async function createAllFilters(catId, title){
     let filterTypes = ["style", "color", "brand", "size"] // avkommenterat för att ta mindre fetch medan jag stylar
     let allFilterWrapper = document.getElementById("all-filters")
     allFilterWrapper.innerHTML = ""
+    createPageTitle(title)
 
     // Skapa en array för att lagra alla asynkrona anrop
     let asyncFilterPromises = filterTypes.map(async filter => {
@@ -174,6 +182,17 @@ async function createAllFilters(catId){
     filterWrappers.forEach(filterWrapper => {
         allFilterWrapper.appendChild(filterWrapper);
     });
+}
+
+function createPageTitle(title){
+    let gender;
+    if(document.getElementById("navigation").classList.contains("men")){
+        gender = "Men"
+    }else{
+        gender = "Women"
+    }
+    let titleDiv = document.getElementById("cat-title")
+    titleDiv.innerHTML = `<h1>${title} For ${gender}</h1>`
 }
 
 function createFilters(arrayOfFilters, filterTitle, catId){
@@ -276,10 +295,12 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId){
         }
     }
 
-    let products = await getFilteredProducts(catId, searchString)
+    let products = await getFilteredProducts(catId, searchString, 1)
     createFilterCount(filterAmount, catId)
-    document.getElementById("wrapper").innerHTML = ""
+    let wrapper = document.getElementById("wrapper")
+    wrapper.innerHTML = ""
     fillpage(products)
+    createShowMore(catId, 1, searchString)
 }
 
 function createFilterCount(count, catId){
@@ -301,12 +322,50 @@ function createFilterCount(count, catId){
             filter.checkedItems = []
         })
 
-        let products = await getProductsByCatId(catId)
-        document.getElementById("wrapper").innerHTML = ""
+        let products = await getProductsByCatId(catId, 1)
+        let wrapper = document.getElementById("wrapper")
+        wrapper.innerHTML = ""
         fillpage(products)
+        createShowMore(catId, 1)
         createFilterCount(0 , catId)
-
     })
 
-    countWrapper.append(clearButton, counter)
+    countWrapper.append(clearButton, counter, "")
 }
+
+async function createShowMore(catId, counter, searchString = null){
+    let btnBox = document.createElement('div')
+    btnBox.id = 'btnBox'
+    let btn = document.createElement('div')
+    btn.innerHTML = `<i class="fa-solid fa-angles-down"></i>`
+    btn.classList.add('showMore')
+    btnBox.appendChild(btn)
+  
+    let wrapper = document.getElementById('content')
+    wrapper.append(btnBox)
+  
+    // this is a function that observe btn, if whole btn is fully vissible on screen dvs, (btnEntrie.isIntersecting == true) then more movies will load to page
+    let observer = new IntersectionObserver(
+      async entries => {
+        let btnEntrie = entries[0]
+  
+        if (!btnEntrie.isIntersecting) return
+        counter++
+        let products
+        if(searchString == null){
+            products = await getProductsByCatId(catId, counter)
+        }else{
+            products = await getFilteredProducts(catId, searchString, counter)
+        }
+
+        fillpage(products)
+      },
+      {
+        // threshold is used to observe if btn is fully vissible on screen, 1 = 100%
+        threshold: 1
+      }
+    )
+  
+    observer.observe(btn)
+  }
+  
