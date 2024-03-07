@@ -51,16 +51,18 @@ async function createNav() {
             }
             currentHoverDiv = createHoverDiv(titleDiv, catData, title.title);
             document.getElementById("navigation").append(currentHoverDiv);
-            // Skapa det nya hover-div
+            currentHoverDiv.classList.remove("hidden")
+                // Skapa det nya hover-div
         });
 
-        // titleDiv.addEventListener("mouseleave", () => {
-        //     // Ta bort hover-div när musen lämnar
-        //     if (currentHoverDiv) {
-        //         currentHoverDiv.remove();
-        //         currentHoverDiv = null;
-        //     }
-        // });
+        titleDiv.addEventListener("mouseleave", () => {
+            // Ta bort hover-div när musen lämnar
+            if (currentHoverDiv) {
+                currentHoverDiv.remove();
+                currentHoverDiv = null;
+            }
+
+        });
 
         document.getElementById("navigation").append(titleDiv)
     });
@@ -71,6 +73,7 @@ function createHoverDiv(titleDiv, catData, categoryTitle) {
     console.log(catData)
     let hoverDiv = document.createElement("div");
     hoverDiv.id = "hover-div";
+    hoverDiv.classList.add("hidden")
     let shopBy;
     if (categoryTitle.toLowerCase() === "sale" || categoryTitle.toLowerCase() === "clothing" || categoryTitle.toLowerCase() === "accessories") {
         shopBy = "SHOP BY PRODUCT";
@@ -173,7 +176,7 @@ function createCategories(womenData, menData) {
 async function fillPageFilterWomen(cat, womenData) {
 
     await createAllFilters(cat.categoryId)
-    let products = await getProductsByCatId(cat.categoryId)
+    let products = await getProductsByCatId(cat.categoryId, 1)
     fillpage(products)
     createTypeHeader(cat.title, "Women")
     createSideFilters(womenData, cat, "Women")
@@ -182,7 +185,7 @@ async function fillPageFilterWomen(cat, womenData) {
 
 async function fillPageFilterMen(cat, menData) {
     await createAllFilters(cat.categoryId)
-    let products = await getProductsByCatId(cat.categoryId)
+    let products = await getProductsByCatId(cat.categoryId, 1)
     fillpage(products)
     createTypeHeader(cat.title, "Men")
     createSideFilters(menData, cat, "Men")
@@ -429,7 +432,7 @@ async function clearFilters(selectedFilters, underFiltersContainer, catId) {
 
     underFiltersContainer.innerHTML = "";
 
-    let products = await getProductsByCatId(catId);
+    let products = await getProductsByCatId(catId, 1);
     document.getElementById("wrapper").innerHTML = "";
     fillpage(products);
     document.getElementById("main-wrapper").append(document.getElementById("wrapper"))

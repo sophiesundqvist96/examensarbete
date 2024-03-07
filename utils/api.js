@@ -85,13 +85,13 @@ export async function getFilteredProducts(catId, filterstring, page) {
 }
 
 // kanske ej behövs 
-export async function getProductByProductUrl(productUrl){
+export async function getProductByProductUrl(productUrl) {
     const url = `https://asos-com1.p.rapidapi.com/products/detail?url=${productUrl}`;
     const options = {
-	    method: 'GET',
-	    headers: {
-		    'X-RapidAPI-Key': '31d61d0eb1msh3067d7e7e785ffdp15adddjsnf38d21b60f0e',
-		    'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': '965e9df12bmshe96076c8a42874ap1b377ejsn6e6fdd89f4d1',
+            'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     }
 
