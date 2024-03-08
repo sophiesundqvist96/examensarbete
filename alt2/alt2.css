@@ -60,10 +60,10 @@
 
 #hover-div {
     position: absolute;
-    top: 170px;
-    /* width: 60vw; */
+    top: 50px;
+    width: max-content;
     background-color: lightgray;
-    /* left: -200px; */
+    left: -100px;
     padding: 40px;
     z-index: 3;
 }
@@ -103,10 +103,7 @@
 }
 
 #all-filters-container {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
-    grid-template-rows: repeat(2, 1fr);
-    height: 10vh;
+    height: fit-content;
     padding: 20px;
 }
 
@@ -114,7 +111,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 160px;
+    height: fit-content;
 }
 
 .filter-wrapper {
@@ -207,4 +204,13 @@
     padding-top: 5px;
     padding-bottom: 5px;
     font-size: small;
+}
+
+.sorry {
+    display: flex;
+    justify-content: center;
+    width: 70vw;
+    padding-top: 100px;
+    font-style: oblique;
+    font-size: larger;
 }
