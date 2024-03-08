@@ -50,7 +50,8 @@ async function createNav() {
                 currentHoverDiv = null;
             }
             currentHoverDiv = createHoverDiv(titleDiv, catData, title.title);
-            document.getElementById("navigation").append(currentHoverDiv);
+            titleDiv.append(currentHoverDiv);
+            // document.getElementById("navigation").append(currentHoverDiv);
             currentHoverDiv.classList.remove("hidden")
                 // Skapa det nya hover-div
         });
@@ -74,6 +75,7 @@ function createHoverDiv(titleDiv, catData, categoryTitle) {
     let hoverDiv = document.createElement("div");
     hoverDiv.id = "hover-div";
     hoverDiv.classList.add("hidden")
+
     let shopBy;
     if (categoryTitle.toLowerCase() === "sale" || categoryTitle.toLowerCase() === "clothing" || categoryTitle.toLowerCase() === "accessories") {
         shopBy = "SHOP BY PRODUCT";
@@ -228,32 +230,38 @@ async function createAllFilters(catId) {
     }
 
     //Style ska inte finnas här bara i sidefilter sen!
-    let filterTypes = ["color"]
+    let filterTypes = ["color", "brand", "size", "design", "body-fit", "discount", "range", "price-range"];
+    let allFilterContainer = document.getElementById("all-filters-container");
+    let allFilterWrapper = document.getElementById("all-filters");
+    allFilterWrapper.innerHTML = "";
+    allFilterContainer.innerHTML = ""
 
-    // , "color", "brand", "size", "design"]
 
-    // , "body-fit", "discount", "range", "price-range"] // avkommenterat för att ta mindre fetch medan jag stylar
-
-    let allFilterContainer = document.getElementById("all-filters-container")
-    let allFilterWrapper = document.getElementById("all-filters")
-    allFilterWrapper.innerHTML = ""
-
-    let asyncFilterPromises = filterTypes.map(async filter => {
-        let arrayOfFilters = await getFilter(filter, catId); // Vänta på att getFilter ska slutföras
-        let filterWrapper = createFilters(arrayOfFilters, filter, catId);
-        console.log(arrayOfFilters)
-        console.log(filter)
-        console.log(catId)
-        return filterWrapper;
-    });
-
-    let filterWrappers = await Promise.all(asyncFilterPromises);
-
+    let filterWrappers = await fetchAllFilters(filterTypes, catId);
     filterWrappers.forEach(filterWrapper => {
         allFilterContainer.appendChild(filterWrapper);
     });
+    allFilterContainer.appendChild(allFilterWrapper);
+}
 
-    allFilterContainer.appendChild(allFilterWrapper)
+async function fetchAllFilters(filterTypes, catId) {
+    let filterWrappers = [];
+
+    // Loopa igenom filtertyper och hämta dem med fördröjning
+    for (let i = 0; i < filterTypes.length; i++) {
+        let filter = filterTypes[i];
+        let arrayOfFilters = await fetchFiltersWithDelay(filter, catId, 50);
+        let filterWrapper = createFilters(arrayOfFilters, filter, catId);
+        filterWrappers.push(filterWrapper);
+    }
+
+    return filterWrappers;
+}
+
+// Skapa en funktion för att hämta filter asynkront med en fördröjning
+async function fetchFiltersWithDelay(filter, catId, delay) {
+    await new Promise(resolve => setTimeout(resolve, delay)); // Vänta fördröjning
+    return await getFilter(filter, catId); // Hämta filterdata
 }
 
 let filterItems = [{
@@ -470,7 +478,7 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
 
     console.log(catId)
     console.log(searchString)
-    let products = await getFilteredProducts(catId, searchString)
+    let products = await getFilteredProducts(catId, searchString, 1)
     document.getElementById("wrapper").innerHTML = ""
     fillpage(products)
     document.getElementById("main-wrapper").append(document.getElementById("wrapper"))
@@ -534,6 +542,12 @@ async function createSideFilters(catData, cat, gender) {
             let filterTypes = ["style"];
             let asyncFilterPromises = filterTypes.map(async filter => {
                 let arrayOfFilters = await getFilter(filter, cat.categoryId);
+                if (arrayOfFilters == null) {
+                    let sorry = document.createElement("div");
+                    sorry.classList.add("sorry")
+                    sorry.innerHTML = "Sorry, no products match your filter criteria. Please try adjusting your filters or check back later for updates."
+                    wrapper.append(sorry)
+                }
                 console.log(arrayOfFilters);
                 if (arrayOfFilters) {
                     arrayOfFilters.forEach(type => {
@@ -562,20 +576,3 @@ async function createSideFilters(catData, cat, gender) {
     mainWrapper.appendChild(sideFiltersContainer);
     mainWrapper.append(wrapper);
 }
-
-// async function handleSideFilter(catId, type) {
-//     console.log(catId);
-
-//     // Skapa söksträngen för filtret "style"
-//     let searchString = "style=" + type.id;
-//     console.log(searchString)
-
-//     // Hämta filtrerade produkter baserat på kategorins ID och söksträngen för filtret "style"
-//     let products = await getFilteredProducts(catId, searchString);
-//     console.log(products)
-//         // Töm innehållet i wrapper-elementet för att förbereda det för de nya filtrerade produkterna
-//     document.getElementById("wrapper").innerHTML = "";
-
-//     // Fyll sidan med de filtrerade produkterna
-//     fillpage(products);
-// }
