@@ -5,13 +5,13 @@ createNav()
 
 async function createNav() {
     let navTitles = [{
-            title: "New In",
+            title: "New in",
             id: 51163
         },
-        {
-            title: "Bestsellers",
-            id: 16661
-        },
+        // {
+        //     title: "Bestsellers",
+        //     id: 16661
+        // },
         {
             "title": "Clothing",
             id: null
@@ -35,44 +35,69 @@ async function createNav() {
         }
     ]
 
+    let currentHoverDiv = null;
+
     navTitles.forEach(title => {
         let titleDiv = document.createElement("div")
         titleDiv.classList.add("nav-title")
         titleDiv.innerHTML = title.title
         let products
-        if (title.title != "Clothing") {
-            titleDiv.addEventListener("click", async() => {
-                products = await getProductsByCatId(title.id)
-                fillpage(products)
-            })
-        } else {
-            let womenCat = catData.Women.children.find(child => child.title == "Categories").children.find(child => child.title == "Clothing").children.find(child => child.title == "SHOP BY PRODUCT").children
-            console.log(womenCat)
-            createHoverDiv(titleDiv, catData)
-            titleDiv.addEventListener("mouseenter", () => {
-                document.getElementById("hover-div").classList.remove("hidden")
-            })
 
-            titleDiv.addEventListener("mouseleave", () => {
-                document.getElementById("hover-div").classList.add("hidden")
-            })
-        }
+        titleDiv.addEventListener("mouseenter", () => {
+            // Ta bort eventuellt befintligt hover-div
+            if (currentHoverDiv) {
+                currentHoverDiv.remove();
+                currentHoverDiv = null;
+            }
+            currentHoverDiv = createHoverDiv(titleDiv, catData, title.title);
+            titleDiv.append(currentHoverDiv);
+            // document.getElementById("navigation").append(currentHoverDiv);
+            currentHoverDiv.classList.remove("hidden")
+                // Skapa det nya hover-div
+        });
+
+        titleDiv.addEventListener("mouseleave", () => {
+            // Ta bort hover-div när musen lämnar
+            if (currentHoverDiv) {
+                currentHoverDiv.remove();
+                currentHoverDiv = null;
+            }
+
+        });
 
         document.getElementById("navigation").append(titleDiv)
-    })
-
+    });
 }
 
-function createHoverDiv(titleDiv, catData) {
+function createHoverDiv(titleDiv, catData, categoryTitle) {
+    console.log(categoryTitle)
+    console.log(catData)
     let hoverDiv = document.createElement("div");
     hoverDiv.id = "hover-div";
-    let womenData = catData.Women.children.find(child => child.title == "Categories").children.find(child => child.title == "Clothing").children.find(child => child.title == "SHOP BY PRODUCT").children
-    let menData = catData.Men.children.find(child => child.title == "Categories").children.find(child => child.title == "Clothing").children.find(child => child.title == "SHOP BY PRODUCT").children
+    hoverDiv.classList.add("hidden")
+
+    let shopBy;
+    if (categoryTitle.toLowerCase() === "sale" || categoryTitle.toLowerCase() === "clothing" || categoryTitle.toLowerCase() === "accessories") {
+        shopBy = "SHOP BY PRODUCT";
+    } else if (categoryTitle.toLowerCase() === "brands") {
+        shopBy = "Top Brands";
+    } else if (categoryTitle.toLowerCase() === "shoes") {
+        shopBy = "SHOP BY STYLE";
+    } else if (categoryTitle.toLowerCase() === "new in") {
+        console.log(categoryTitle.toLowerCase())
+        shopBy = "NEW PRODUCTS";
+    }
+
+    console.log(shopBy);
+
+    let womenData = catData.Women.children.find(child => child.title == "Categories").children.find(child => child.title == categoryTitle).children.find(child => child.title == shopBy).children
+    let menData = catData.Men.children.find(child => child.title == "Categories").children.find(child => child.title == categoryTitle).children.find(child => child.title == shopBy).children
+
 
     let categoriesWrapper = createCategories(womenData, menData);
     hoverDiv.appendChild(categoriesWrapper);
-
     titleDiv.append(hoverDiv);
+    return hoverDiv
 }
 
 function createCategories(womenData, menData) {
@@ -151,16 +176,18 @@ function createCategories(womenData, menData) {
 }
 
 async function fillPageFilterWomen(cat, womenData) {
+
     await createAllFilters(cat.categoryId)
-    let products = await getProductsByCatId(cat.categoryId)
+    let products = await getProductsByCatId(cat.categoryId, 1)
     fillpage(products)
     createTypeHeader(cat.title, "Women")
     createSideFilters(womenData, cat, "Women")
+
 }
 
 async function fillPageFilterMen(cat, menData) {
     await createAllFilters(cat.categoryId)
-    let products = await getProductsByCatId(cat.categoryId)
+    let products = await getProductsByCatId(cat.categoryId, 1)
     fillpage(products)
     createTypeHeader(cat.title, "Men")
     createSideFilters(menData, cat, "Men")
@@ -184,33 +211,57 @@ function createTypeHeader(productType, gender) {
 
 async function createAllFilters(catId) {
 
+    const mainWrapper = document.getElementById("main-wrapper");
+    const wrapper = document.getElementById("wrapper");
+    const underFilters = document.getElementById("under-filters");
+    const typeHeader = document.getElementsByClassName("typeHeader");
+    const allFilters = document.getElementsByClassName("filter-wrapper");
+
+    wrapper.innerHTML = "";
+
+    if (typeHeader.length > 0) {
+        typeHeader[0].remove()
+    }
+    underFilters.innerHTML = ""
+
+
+    if (allFilters.length > 0) {
+        allFilters[0].remove()
+    }
+
     //Style ska inte finnas här bara i sidefilter sen!
-    let filterTypes = ["style"]
+    let filterTypes = ["color", "brand", "size", "design", "body-fit", "discount", "range", "price-range"];
+    let allFilterContainer = document.getElementById("all-filters-container");
+    let allFilterWrapper = document.getElementById("all-filters");
+    allFilterWrapper.innerHTML = "";
+    allFilterContainer.innerHTML = ""
 
-    // , "color", "brand", "size", "design"]
 
-    // , "body-fit", "discount", "range", "price-range"] // avkommenterat för att ta mindre fetch medan jag stylar
-
-    let allFilterContainer = document.getElementById("all-filters-container")
-    let allFilterWrapper = document.getElementById("all-filters")
-    allFilterWrapper.innerHTML = ""
-
-    let asyncFilterPromises = filterTypes.map(async filter => {
-        let arrayOfFilters = await getFilter(filter, catId); // Vänta på att getFilter ska slutföras
-        let filterWrapper = createFilters(arrayOfFilters, filter, catId);
-        console.log(arrayOfFilters)
-        console.log(filter)
-        console.log(catId)
-        return filterWrapper;
-    });
-
-    let filterWrappers = await Promise.all(asyncFilterPromises);
-
+    let filterWrappers = await fetchAllFilters(filterTypes, catId);
     filterWrappers.forEach(filterWrapper => {
         allFilterContainer.appendChild(filterWrapper);
     });
+    allFilterContainer.appendChild(allFilterWrapper);
+}
 
-    allFilterContainer.appendChild(allFilterWrapper)
+async function fetchAllFilters(filterTypes, catId) {
+    let filterWrappers = [];
+
+    // Loopa igenom filtertyper och hämta dem med fördröjning
+    for (let i = 0; i < filterTypes.length; i++) {
+        let filter = filterTypes[i];
+        let arrayOfFilters = await fetchFiltersWithDelay(filter, catId, 50);
+        let filterWrapper = createFilters(arrayOfFilters, filter, catId);
+        filterWrappers.push(filterWrapper);
+    }
+
+    return filterWrappers;
+}
+
+// Skapa en funktion för att hämta filter asynkront med en fördröjning
+async function fetchFiltersWithDelay(filter, catId, delay) {
+    await new Promise(resolve => setTimeout(resolve, delay)); // Vänta fördröjning
+    return await getFilter(filter, catId); // Hämta filterdata
 }
 
 let filterItems = [{
@@ -298,9 +349,9 @@ function createFilters(arrayOfFilters, filterTitle, catId) {
 
 
             checkBox.addEventListener("click", () => {
+
                 if (checkBox.checked) {
                     filterOnCheckedItems(filterTitle, filter.id, "add", catId);
-
                     selectedFilters.push(filter.name);
                     handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, filterTitle, catId, checkBox)
 
@@ -329,6 +380,7 @@ function handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, f
 
     clearButton.addEventListener("click", async() => {
         clearFilters(selectedFilters, underFiltersContainer, catId)
+
     });
 
 
@@ -345,10 +397,13 @@ function handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, f
                 selectedFilters.splice(index, 1);
             }
 
+
             filterOnCheckedItems(filterTitle, filter.id, "delete", catId);
             checkBox.checked = false;
         });
         underFiltersContainer.appendChild(filterNameDiv);
+
+
     });
 
 }
@@ -385,13 +440,17 @@ async function clearFilters(selectedFilters, underFiltersContainer, catId) {
 
     underFiltersContainer.innerHTML = "";
 
-    let products = await getProductsByCatId(catId);
+    let products = await getProductsByCatId(catId, 1);
     document.getElementById("wrapper").innerHTML = "";
     fillpage(products);
+    document.getElementById("main-wrapper").append(document.getElementById("wrapper"))
 }
 
 
 async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
+    console.log(title)
+    console.log(checkedItem)
+    console.log(catId)
     if (addOrdDelete == "add") {
         filterItems.find(item => item.title == title).checkedItems.push(checkedItem)
     } else {
@@ -419,9 +478,11 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
 
     console.log(catId)
     console.log(searchString)
-    let products = await getFilteredProducts(catId, searchString)
+    let products = await getFilteredProducts(catId, searchString, 1)
     document.getElementById("wrapper").innerHTML = ""
     fillpage(products)
+    document.getElementById("main-wrapper").append(document.getElementById("wrapper"))
+
 }
 
 async function createSideFilters(catData, cat, gender) {
@@ -429,10 +490,14 @@ async function createSideFilters(catData, cat, gender) {
     console.log(cat);
     const mainWrapper = document.getElementById("main-wrapper");
     const wrapper = document.getElementById("wrapper");
-    const underFiltes = document.getElementById("under-filters");
+    const underFilters = document.getElementById("under-filters");
     const typeHeader = document.getElementsByClassName("typeHeader");
+    const allFilters = document.getElementsByClassName("filter-wrapper");
     mainWrapper.innerHTML = "";
 
+    // Create a common div container for side filters
+    const sideFiltersContainer = document.createElement("div");
+    sideFiltersContainer.classList.add("side-filters-container");
 
     catData.forEach(async category => {
         let catTitle = document.createElement("div");
@@ -443,8 +508,17 @@ async function createSideFilters(catData, cat, gender) {
         catTitle.addEventListener("click", async() => {
             console.log(category);
             wrapper.innerHTML = "";
-            underFiltes.innerHTML = "";
-            typeHeader.innerHTML = "";
+            console.log(underFilters)
+            if (typeHeader.length > 0) {
+                typeHeader[0].remove()
+            }
+            underFilters.innerHTML = ""
+
+
+            if (allFilters.length > 0) {
+                allFilters[0].remove()
+            }
+
             // Hämta produkter för den valda kategorin
 
             if (gender == "Women") {
@@ -452,6 +526,7 @@ async function createSideFilters(catData, cat, gender) {
 
             } else if (gender == "Men") {
                 fillPageFilterMen(category, catData);
+
             }
             // Uppdatera sidofilter
             createSideFilters(catData, category);
@@ -459,44 +534,45 @@ async function createSideFilters(catData, cat, gender) {
 
         let catList = document.createElement("ul"); // Skapa en lista för underkategorierna
 
+
         if (cat.categoryId == category.categoryId) {
+            catTitle.style.fontWeight = "900";
+            catTitle.style.textDecoration = "underline";
+
             let filterTypes = ["style"];
             let asyncFilterPromises = filterTypes.map(async filter => {
                 let arrayOfFilters = await getFilter(filter, cat.categoryId);
+                if (arrayOfFilters == null) {
+                    let sorry = document.createElement("div");
+                    sorry.classList.add("sorry")
+                    sorry.innerHTML = "Sorry, no products match your filter criteria. Please try adjusting your filters or check back later for updates."
+                    wrapper.append(sorry)
+                }
                 console.log(arrayOfFilters);
                 if (arrayOfFilters) {
                     arrayOfFilters.forEach(type => {
-                        let type_li = document.createElement("li"); // Skapa ett listelement för varje underkategori
+                        let type_li = document.createElement("li");
                         type_li.classList.add("sideFilterType");
                         type_li.innerHTML = type.name;
-
+                        type_li.style.fontWeight = "200";
+                        type_li.style.textDecoration = "none";
                         catList.appendChild(type_li);
 
                         type_li.addEventListener("click", async() => {
-                            handleSideFilter(type)
+                            console.log(cat.title)
+                            console.log(category.categoryId)
+                            console.log(cat.categoryId)
+                            wrapper.innerHTML = "";
+                            filterOnCheckedItems("style", type.id, "add", category.categoryId)
                         })
                     });
                 }
             })
         }
-        catTitle.appendChild(catList); // Lägg till listan av underkategorier under kategoridiv
-        mainWrapper.appendChild(catTitle);
-
+        catTitle.appendChild(catList);
+        sideFiltersContainer.appendChild(catTitle);
     });
-}
 
-async function handleSideFilter(type) {
-    console.log(type.id);
-
-    // Skapa söksträngen för filtret "style"
-    let searchString = "style=" + type.id;
-
-    // Hämta filtrerade produkter baserat på kategorins ID och söksträngen för filtret "style"
-    let products = await getFilteredProducts(type.id, "Dresses");
-
-    // Töm innehållet i wrapper-elementet för att förbereda det för de nya filtrerade produkterna
-    document.getElementById("wrapper").innerHTML = "";
-
-    // Fyll sidan med de filtrerade produkterna
-    fillpage(products);
+    mainWrapper.appendChild(sideFiltersContainer);
+    mainWrapper.append(wrapper);
 }
