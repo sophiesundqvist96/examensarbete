@@ -1,3 +1,7 @@
+body{
+    margin: 0px;
+}
+
 #header{
     height: 110px;
     display: flex;
@@ -32,10 +36,12 @@
     align-items: center;
     margin-right: 50px;
     position: relative;
+    padding: 10px;
 }
 
 .nav-title:hover{
     cursor: pointer;
+    font-weight: bold;
 }
 
 #wrapper{
@@ -44,6 +50,10 @@
     gap: 10px;
     padding-left: 40px;
     padding-right: 40px;
+}
+
+.product-img >img:hover{
+    border: 0.5px solid;
 }
 
 .product-info > p{
@@ -62,13 +72,16 @@
 
 #hover-div{
     position: absolute;
-    top: 50px;
+    top: 51px;
     width: 60vw;
-    background-color: lightgray;
+    background-color: white;
     left: -100px;
     padding: 40px;
     z-index: 3;
+    border: 1px solid;
+    border-top: 0px;
 }
+
 
 #cat-wrapper{
     display: flex;
@@ -84,10 +97,12 @@
 
 #cat-wrapper > div > p{
     margin: 2px;
+    font-weight: 200;
 }
 
 #cat-wrapper > div > p:hover{
     cursor: pointer;
+    font-weight: bold;
 }
 
 .hidden{
@@ -105,5 +120,23 @@
 }
 
 .price{
+    font-weight: bold;
+}
+
+#first-page-images-wrapper{
+    display: flex;
+    border-top: 15px solid black;
+    border-bottom: 10px solid black;
+}
+
+.first-page-img{
+    flex-grow: 1;
+    height: 650px;
+    background-position: center;
+    background-size: cover;
+}
+
+#men:hover, #women:hover{
+    cursor: pointer;
     font-weight: bold;
 }
