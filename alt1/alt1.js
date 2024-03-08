@@ -1,11 +1,10 @@
 import { catData,getProductsByCatId, getFilter, getFilteredProducts } from "../utils/api.js";
-import {fillpage } from "../utils/index.js"
+import {fillpage, createFrontPageWomen, createFrontPageMen, getUrl, getMenOrWom } from "../utils/index.js"
 
-
-createNav()
-createBottonListenWoM()
 
 export async function createNav(){
+    let gender = getMenOrWom()
+
     let navTitles = [
         {
             title: "New In",
@@ -41,23 +40,22 @@ export async function createNav(){
         if(title.title != "Clothing"){
             titleDiv.addEventListener("click", async () =>{
                 let id;
-                if(document.getElementById("navigation").classList.contains("women")){
+                if(gender == "women"){
                     id = title.id.women
                 }else{
                    id = title.id.men
                 }
                 
                 products = await getProductsByCatId(id ,1)
-                console.log(products)
-                await createAllFilters(id)
+                await createAllFilters(id, title.title)
                 let wrapper = document.getElementById("wrapper")
                 wrapper.innerHTML = ""
                 fillpage(products) 
-                createShowMore(id, 1)
+                createShowMore(id, 1, null)
             } )
         }else{
             let data;
-            if(document.getElementById("navigation").classList.contains("women")){
+            if(gender == "women"){
                 data = catData.Women.children.find(child => child.title == "Categories").children.find(child => child.title == "Clothing").children.find(child => child.title == "SHOP BY PRODUCT").children
             }else{
                data = catData.Men.children.find(child => child.title == "Categories").children.find(child => child.title == "Clothing").children.find(child => child.title == "SHOP BY PRODUCT").children
@@ -73,32 +71,23 @@ export async function createNav(){
         }
  
         document.getElementById("navigation").append(titleDiv)
+        
     })
    
 }
 
 // för att ändra till män och kvinnor.. create nav är dock hårdkodad efter kvinnor så den behöver ändras
 function changeToMen(){
-    let navWrapper = document.getElementById("navigation")
-    if(navWrapper.classList.contains("women")){
-        document.getElementById("wrapper").innerHTML = ""
-        // här borde också läggas till att man kommer till "första sidan" som är anpassad för män
-        navWrapper.classList.remove("women")
-        navWrapper.classList.add("men")
-        navWrapper.innerHTML = ""
-        createNav()
+    let gender = getMenOrWom()
+    if(gender == "women"){
+        window.location.href = `http://localhost:8888/alt1/alt1.html?gender=men`
     } 
 }
 
 function changeToWomen(){
-    let navWrapper = document.getElementById("navigation")
-    if(navWrapper.classList.contains("men")){
-        document.getElementById("wrapper").innerHTML = ""
-        // här borde också läggas till att man kommer till "första sidan" som är anpassad för kvinnor
-        navWrapper.classList.remove("men")
-        navWrapper.classList.add("women")
-        navWrapper.innerHTML = ""
-        createNav()
+    let gender = getMenOrWom()
+    if(gender == "men"){
+        window.location.href = `http://localhost:8888/alt1/alt1.html?gender=women`
     } 
 }
 
@@ -111,7 +100,7 @@ export function createBottonListenWoM(){
 
 function createHoverDiv(titleDiv, allCategories){
     let menOrWom;
-    if(document.getElementById("navigation").classList.contains("men")){
+    if(getMenOrWom() == "men"){
         menOrWom = "MEN"
     }else{
         menOrWom = "WOMEN"
@@ -153,7 +142,7 @@ function createCategories(allCategories){
             let wrapper = document.getElementById("wrapper")
             wrapper.innerHTML = ""
             fillpage(products)
-            createShowMore(cat.categoryId, 1)
+            createShowMore(cat.categoryId, 1, null)
         })
     })
     
@@ -171,7 +160,11 @@ async function createAllFilters(catId, title){
     // Skapa en array för att lagra alla asynkrona anrop
     let asyncFilterPromises = filterTypes.map(async filter => {
         let arrayOfFilters = await getFilter(filter, catId); // Vänta på att getFilter ska slutföras
-        let filterWrapper = createFilters(arrayOfFilters, filter, catId);
+        let filterWrapper = null
+        console.log(arrayOfFilters)
+        if(arrayOfFilters != null){
+            filterWrapper = createFilters(arrayOfFilters, filter, catId);
+        }
         return filterWrapper;
     });
 
@@ -180,19 +173,19 @@ async function createAllFilters(catId, title){
 
     // Lägg till alla filterWrappers till allFilterWrapper
     filterWrappers.forEach(filterWrapper => {
-        allFilterWrapper.appendChild(filterWrapper);
+        if(filterWrapper != null){
+            console.log(filterWrapper)
+            allFilterWrapper.appendChild(filterWrapper);
+        }
     });
 }
 
 function createPageTitle(title){
-    let gender;
-    if(document.getElementById("navigation").classList.contains("men")){
-        gender = "Men"
-    }else{
-        gender = "Women"
-    }
+    console.log(title)
+    let gender = getMenOrWom()
+
     let titleDiv = document.getElementById("cat-title")
-    titleDiv.innerHTML = `<h1>${title} For ${gender}</h1>`
+    titleDiv.innerHTML = `<h1>${title} For ${gender.charAt(0).toUpperCase()}</h1>`
 }
 
 function createFilters(arrayOfFilters, filterTitle, catId){
@@ -222,7 +215,7 @@ function createFilters(arrayOfFilters, filterTitle, catId){
     dropdownWrapper.classList.add("dropdown-content")
 
     filterWrapper.append(buttonDiv, dropdownWrapper)
-
+    console.log(arrayOfFilters)
    if(arrayOfFilters != null){ /// om den är null måsta vi göra något annat för att visa att det inte finns fler alternativ
         arrayOfFilters.forEach(filter =>{
             let option = document.createElement("div")
@@ -326,17 +319,27 @@ function createFilterCount(count, catId){
         let wrapper = document.getElementById("wrapper")
         wrapper.innerHTML = ""
         fillpage(products)
-        createShowMore(catId, 1)
+        createShowMore(catId, 1, null)
         createFilterCount(0 , catId)
     })
 
     countWrapper.append(clearButton, counter, "")
 }
 
-async function createShowMore(catId, counter, searchString = null){
-    let btnBox = document.createElement('div')
-    btnBox.id = 'btnBox'
+
+async function createShowMore(catId, counter, searchString){
+    let btnBox
+    if(!document.getElementById("btnBox")){
+        btnBox = document.createElement('div')
+        btnBox.id = 'btnBox'
+    }else{
+        btnBox = document.getElementById("btnBox")
+    }
+
+    btnBox.innerHTML = ""
+
     let btn = document.createElement('div')
+    btn.id = "observer-btn"
     btn.innerHTML = `<i class="fa-solid fa-angles-down"></i>`
     btn.classList.add('showMore')
     btnBox.appendChild(btn)
@@ -354,8 +357,10 @@ async function createShowMore(catId, counter, searchString = null){
         let products
         if(searchString == null){
             products = await getProductsByCatId(catId, counter)
+            console.log("ej search")
         }else{
             products = await getFilteredProducts(catId, searchString, counter)
+            console.log(searchString)
         }
 
         fillpage(products)
@@ -368,4 +373,6 @@ async function createShowMore(catId, counter, searchString = null){
   
     observer.observe(btn)
   }
+
+ 
   
