@@ -348,10 +348,10 @@ function createFilterCount(count, catId){
 
         let products = await getProductsByCatId(catId, 1)
         let wrapper = document.getElementById("wrapper")
+        countWrapper.innerHTML = ""
         wrapper.innerHTML = ""
         fillpage(products, "1")
-        createShowMore(catId, 1, searchString)
-        createFilterCount(0 , catId)
+        createShowMore(catId, 1, null)
     })
 
     countWrapper.append(clearButton, counter, "")

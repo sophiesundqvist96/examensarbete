@@ -20,6 +20,10 @@ body{
     margin: 10px;
 }
 
+.filter-wrapper:hover{
+    cursor: pointer;
+}
+
 .filter-wrapper > div:nth-child(1){
     height: 40px;
     display: flex;
@@ -63,14 +67,19 @@ body{
 
 #count-wrapper{
     display: flex;
+    width: 100%;
+    padding-left: 40px;
+    font-size: 11pt;
 }
 
 #count-wrapper > p{
     margin-right: 20px;
 }
 
-#count-wrapper > p:hover{
+
+#count-wrapper > p:nth-child(1):hover{
     cursor: pointer;
+    font-weight: bolder;
 }
 
 #all-filters-wrapper{
@@ -79,6 +88,8 @@ body{
     justify-content: center;
     align-items: center;
 }
+
+
 
 #cat-title{
     padding-top: 20px;
