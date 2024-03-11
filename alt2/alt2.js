@@ -239,18 +239,31 @@ async function createAllFilters(catId) {
 async function createAllFiltersTest(filterTypes, catId) {
     let allFilterContainer = document.getElementById("all-filters-container")
     allFilterContainer.innerHTML = ""
-    let half = Math.floor(filterTypes.length / 2);
-    let arr1 = filterTypes.slice(0, half);
+    let third = Math.floor(filterTypes.length / 3);
+    let arr1 = filterTypes.slice(0, third);
     console.log(arr1)
-    let arr2 = filterTypes.slice(half);
+    let arr2 = filterTypes.slice(third, third * 2); // Korrigerad linje
+    console.log(arr2)
+    let arr3 = filterTypes.slice(third * 2); // Korrigerad linje
+    console.log(arr3)
 
     let filterswrapper1 = await callFilters(arr1, catId)
     let filterswrapper2 = await new Promise((resolve, reject) => {
         setTimeout(async() => {
             resolve(await callFilters(arr2, catId));
-        }, 1500); // Fördröj anropet med 1000 ms
+        }, 1000); // Fördröj anropet med 1000 ms
     });
+
+    let filterswrapper3 = await new Promise((resolve, reject) => {
+        setTimeout(async() => {
+            resolve(await callFilters(arr3, catId));
+        }, 1000); // Fördröj anropet med 1000 ms
+    });
+
     let filters = filterswrapper1.concat(filterswrapper2)
+    console.log(filters)
+    filters = filters.concat(filterswrapper3)
+    console.log(filters)
 
     filters.forEach(filterWrapper => {
         if (filterWrapper != null) {

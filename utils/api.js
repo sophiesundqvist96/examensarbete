@@ -1,4 +1,4 @@
-counter = 0
+let counter = 0
 export async function getCategories() {
     counter++
     console.log("fetch " + counter)
