@@ -6,7 +6,7 @@ import { getMenOrWom, getCatIdFromUrl, getTitleFromUrl, getCategoryTitleFromUrl,
 createNav()
 
 if(getPage() == "product"){
-    createProductPage()
+    createProductPage("2")
 }else if(getPage() == "category"){
     let catId = getCatIdFromUrl()
     let title = getTitleFromUrl()

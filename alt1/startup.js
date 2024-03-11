@@ -7,7 +7,7 @@ createNav()
 createBottonListenWoM()
 
 if(getPage() == "product"){
-    createProductPage()
+    createProductPage("1")
     if(getMenOrWom() == "men"){
         document.getElementById("men").style.fontWeight = "bold"
         document.getElementById("women").style.fontWeight = "200"
@@ -16,8 +16,9 @@ if(getPage() == "product"){
         document.getElementById("men").style.fontWeight = "200"
     }
 }else if(getPage() == "category"){
+    document.getElementById("single-product-wrapper").style.display = "none"
     createProductsByCategoryPage()
 }else{
-
+    document.getElementById("single-product-wrapper").style.display = "none"
     createFrontPage()   
 }

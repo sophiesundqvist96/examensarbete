@@ -21,14 +21,15 @@ export function getPage(){
 }
 
 
-export async function createProductPage(){
+export async function createProductPage(alt){
+    document.getElementById("single-product-wrapper").style.display = "block"
     let productUrl = getProductUrl()
     let productData = await getProductByProductUrl(productUrl)
     console.log(productData)
-    createOneProduct(productData)
+    createOneProduct(productData, alt)
 }
 
-function createOneProduct(product){
+function createOneProduct(product, alt){
     let productWrapper = document.getElementById("product-wrapper")
 
     let imgWrapper = document.createElement("div") // gör detta till grid där en är mycket större än de andra
@@ -82,7 +83,10 @@ function createOneProduct(product){
         </div>`
 
     productWrapper.append(imgWrapper, infoWrapper)
-    createSimilar(product.id)
+
+    if(alt == "2"){
+        createSimilar(product.id)
+    }
     
 }
 

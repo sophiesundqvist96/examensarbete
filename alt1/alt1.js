@@ -115,13 +115,13 @@ function createHoverDiv(titleDiv, allCategories){
         <p>${menOrWom}</p>
         <p>SHOP BY PRODUCT</p>`
 
-    let categories = createCategories(allCategories)
+    let categories = createCategories(allCategories, menOrWom.toLowerCase())
     hoverDiv.append(categories)
     titleDiv.append(hoverDiv)
 }
 
 
-function createCategories(allCategories){
+function createCategories(allCategories, gender){
     let catWrapper = document.createElement("div")
     catWrapper.id = "cat-wrapper"
     
@@ -139,7 +139,7 @@ function createCategories(allCategories){
         }
         categori.addEventListener("click", async () =>{
             document.getElementById("hover-div").classList.add("hidden")
-           window.location.href = `http://localhost:8888/alt1/alt1.html?page=category&catId=${cat.categoryId}&title=${cat.title}`
+           window.location.href = `http://localhost:8888/alt1/alt1.html?page=category&gender=${gender}&catId=${cat.categoryId}&title=${cat.title}`
         })
     })
     
@@ -163,7 +163,7 @@ async function createAllFilters(catId, title){
     let filterTypes = ["style", "color", "brand", "size"] // avkommenterat för att ta mindre fetch medan jag stylar
     let allFilterWrapper = document.getElementById("all-filters")
     allFilterWrapper.innerHTML = ""
-    createPageTitle(title)
+    createTypeHeader(title)
 
     // Skapa en array för att lagra alla asynkrona anrop
     let asyncFilterPromises = filterTypes.map(async filter => {
@@ -188,12 +188,20 @@ async function createAllFilters(catId, title){
     });
 }
 
-function createPageTitle(title){
-    console.log(title)
+function createTypeHeader(productType) {
     let gender = getMenOrWom()
+    let typeOfProduct = document.getElementById("cat-title");
+    let typeHeader = document.createElement("h3")
 
-    let titleDiv = document.getElementById("cat-title")
-    titleDiv.innerHTML = `<h1>${title} For ${gender.charAt(0).toUpperCase() + gender.slice(1)}</h1>`
+    let typeText = "";
+    if (gender === "men") {
+        typeText += "Men's's ";
+    } else{
+        typeText += "Women's ";
+    }
+    typeText += productType;
+    typeHeader.innerHTML = typeText;
+    typeOfProduct.appendChild(typeHeader);
 }
 
 function createFilters(arrayOfFilters, filterTitle, catId){
@@ -348,19 +356,13 @@ async function createShowMore(catId, counter, searchString){
 
     let btn = document.createElement('div')
     btn.id = "observer-btn"
-    btn.innerHTML = `<i class="fa-solid fa-angles-down"></i>`
+    btn.innerHTML = `<p>SHOW MORE</p>`
     btn.classList.add('showMore')
     btnBox.appendChild(btn)
   
     let wrapper = document.getElementById('content')
     wrapper.append(btnBox)
-  
-    // this is a function that observe btn, if whole btn is fully vissible on screen dvs, (btnEntrie.isIntersecting == true) then more movies will load to page
-    let observer = new IntersectionObserver(
-      async entries => {
-        let btnEntrie = entries[0]
-  
-        if (!btnEntrie.isIntersecting) return
+    btn.addEventListener("click", async ()=>{
         counter++
         let products
         if(searchString == null){
@@ -370,16 +372,9 @@ async function createShowMore(catId, counter, searchString){
             products = await getFilteredProducts(catId, searchString, counter)
             console.log(searchString)
         }
-
         fillpage(products, "1")
-      },
-      {
-        // threshold is used to observe if btn is fully vissible on screen, 1 = 100%
-        threshold: 1
-      }
-    )
-  
-    observer.observe(btn)
+    })
+
   }
 
  

@@ -1,4 +1,7 @@
+counter = 0
 export async function getCategories() {
+    counter++
+    console.log("fetch " + counter)
     const url = 'https://asos-com1.p.rapidapi.com/categories/list-shortened';
     const options = {
         method: 'GET',
@@ -22,6 +25,8 @@ export const catData = await getCategories()
 
 // returnera en array av producter baserat på kategori-id (cid)
 export async function getProductsByCatId(catId, page) {
+    counter++
+    console.log("fetch " + counter)
     const url = `https://asos-com1.p.rapidapi.com/products/search-by-category?cid=${catId}&page=${page}`;
     const options = {
         method: 'GET',
@@ -34,7 +39,7 @@ export async function getProductsByCatId(catId, page) {
     try {
         const response = await fetch(url, options);
         const result = await response.json();
-        console.log(result)
+        //console.log(result)
         return result.data.products
     } catch (error) {
         console.error(error);
@@ -42,6 +47,8 @@ export async function getProductsByCatId(catId, page) {
 }
 
 export async function getFilter(filterType, catId) {
+    counter++
+    console.log("fetch " + counter)
     const url = `https://asos-com1.p.rapidapi.com/filters/${filterType}?q=${catId}&search_type=ByCategory`;
     const options = {
         method: 'GET',
@@ -54,7 +61,7 @@ export async function getFilter(filterType, catId) {
     try {
         const response = await fetch(url, options);
         const result = await response.json();
-        console.log(result);
+        //console.log(result);
         return result.data
     } catch (error) {
         console.error(error);
@@ -63,6 +70,8 @@ export async function getFilter(filterType, catId) {
 
 
 export async function getFilteredProducts(catId, filterstring, page) {
+    counter++
+    console.log("fetch " + counter)
     const url = `https://asos-com1.p.rapidapi.com/products/search-by-category?cid=${catId}&${filterstring}&page=${page}`;
     const options = {
         method: 'GET',
@@ -75,7 +84,7 @@ export async function getFilteredProducts(catId, filterstring, page) {
     try {
         const response = await fetch(url, options);
         const result = await response.json();
-        console.log(result)
+        //console.log(result)
         return result.data.products
     } catch (error) {
         console.error(error);
@@ -84,8 +93,10 @@ export async function getFilteredProducts(catId, filterstring, page) {
 
 // kanske ej behövs 
 export async function getProductByProductUrl(productUrl) {
+    counter++
+    console.log("fetch " + counter)
     const url = `https://asos-com1.p.rapidapi.com/products/detail?url=${productUrl}`;
-    console.log(url)
+    //console.log(url)
     const options = {
         method: 'GET',
         headers: {
@@ -97,7 +108,7 @@ export async function getProductByProductUrl(productUrl) {
     try {
         const response = await fetch(url, options);
         const result = await response.json();
-        console.log(result)
+        //console.log(result)
         return result.data
     } catch (error) {
         console.error(error);
@@ -106,6 +117,8 @@ export async function getProductByProductUrl(productUrl) {
 
 
 export async function getSimilarProducts(catId){
+    counter++
+    console.log("fetch " + counter)
     const url = `https://asos-com1.p.rapidapi.com/products/list-similarities?id=${catId}`;
     const options = {
         method: 'GET',
@@ -118,7 +131,7 @@ export async function getSimilarProducts(catId){
     try {
         const response = await fetch(url, options);
         const result = await response.json();
-        console.log(result.data);
+        //console.log(result.data);
         return result.data
     } catch (error) {
         console.error(error);
