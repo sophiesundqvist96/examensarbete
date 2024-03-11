@@ -123,7 +123,7 @@ function createCategories(womenData, menData, categoryTitle, shopBy) {
         category.addEventListener("click", async() => {
             document.getElementById("hover-div").classList.add("hidden")
             window.location.href = `http://localhost:8888/alt2/alt2.html?page=category&catId=${cat.categoryId}&title=${cat.title}&gender=women&categoryTitle=${categoryTitle}&shopBy=${shopBy}`
-            //fillPageFilterWomen(cat, womenData, "Women")
+                //fillPageFilterWomen(cat, womenData, "Women")
         });
         if (i < 18) {
             womenDiv1.appendChild(category);
@@ -148,7 +148,7 @@ function createCategories(womenData, menData, categoryTitle, shopBy) {
         category.addEventListener("click", async() => {
             document.getElementById("hover-div").classList.add("hidden")
             window.location.href = `http://localhost:8888/alt2/alt2.html?page=category&catId=${cat.categoryId}&title=${cat.title}&gender=men&categoryTitle=${categoryTitle}&shopBy=${shopBy}`
-            //fillPageFilterMen(cat, menData)
+                //fillPageFilterMen(cat, menData)
         });
         if (i < 18) {
             menDiv1.appendChild(category);
@@ -236,36 +236,36 @@ async function createAllFilters(catId) {
 }
 
 
-async function createAllFiltersTest(filterTypes, catId){
+async function createAllFiltersTest(filterTypes, catId) {
     let allFilterContainer = document.getElementById("all-filters-container")
     allFilterContainer.innerHTML = ""
     let half = Math.floor(filterTypes.length / 2);
     let arr1 = filterTypes.slice(0, half);
     console.log(arr1)
-    let  arr2 = filterTypes.slice(half);
+    let arr2 = filterTypes.slice(half);
 
-    let filterswrapper1 =  await callFilters(arr1, catId)
+    let filterswrapper1 = await callFilters(arr1, catId)
     let filterswrapper2 = await new Promise((resolve, reject) => {
-        setTimeout(async () => {
+        setTimeout(async() => {
             resolve(await callFilters(arr2, catId));
         }, 1500); // Fördröj anropet med 1000 ms
     });
     let filters = filterswrapper1.concat(filterswrapper2)
 
     filters.forEach(filterWrapper => {
-        if(filterWrapper != null){
+        if (filterWrapper != null) {
             allFilterContainer.appendChild(filterWrapper);
         }
     });
 
 }
 
-async function callFilters(array, catId){
+async function callFilters(array, catId) {
     let asyncFilterPromises = array.map(async filter => {
         let arrayOfFilters = await getFilter(filter, catId); // Vänta på att getFilter ska slutföras
         let filterWrapper = null
         console.log(arrayOfFilters)
-        if(arrayOfFilters != null){
+        if (arrayOfFilters != null) {
             filterWrapper = createFilters(arrayOfFilters, filter, catId);
         }
         return filterWrapper;
@@ -527,10 +527,12 @@ async function createSideFilters(catData, catId, gender) {
     catData.forEach(async category => {
         let catTitle = document.createElement("div");
         catTitle.classList.add("sideFilterName");
-        catTitle.innerHTML = category.title;
+        let mainTitle = document.createElement("div")
+        mainTitle.innerHTML = category.title;
+        catTitle.appendChild(mainTitle)
 
         // Lägg till en klickhändelselyssnare för att ladda produkter för den valda kategorin och uppdatera sidofilter
-        catTitle.addEventListener("click", () => {
+        mainTitle.addEventListener("click", () => {
             wrapper.innerHTML = "";
             if (typeHeader.length > 0) {
                 typeHeader[0].remove()
@@ -547,42 +549,42 @@ async function createSideFilters(catData, catId, gender) {
             if (gender == "Women") {
                 let currUrl = new URL(window.location.href);
                 let stringUrl = currUrl.href
-                
+
 
                 let newCatId = category.categoryId
                 let newTitle = category.title
                 let newUrl = stringUrl.replace(getCatIdFromUrl(), newCatId)
                 newUrl = newUrl.replace(getTitleFromUrl(), newTitle)
                 window.location.href = newUrl
-                //fillPageFilterWomen(category, catData); // Skicka med den nya kategorin
+                    //fillPageFilterWomen(category, catData); // Skicka med den nya kategorin
 
             } else if (gender == "Men") {
                 let currUrl = new URL(window.location.href);
                 let stringUrl = currUrl.href
-                
+
                 let newCatId = category.categoryId
                 let newTitle = category.title
                 let newUrl = stringUrl.replace(getCatIdFromUrl(), newCatId)
                 newUrl = newUrl.replace(getTitleFromUrl(), newTitle)
                 window.location.href = newUrl
-                //fillPageFilterMen(category, catData);
+                    //fillPageFilterMen(category, catData);
 
             }
             // Uppdatera sidofilter
             //createSideFilters(catData, category);
         });
 
-        let catList = document.createElement("ul"); // Skapa en lista för underkategorierna
+        let catList = document.createElement("div"); // Skapa en lista för underkategorierna
 
 
         if (catId == category.categoryId) {
-            catTitle.style.fontWeight = "900";
-            catTitle.style.textDecoration = "underline";
+            mainTitle.style.fontWeight = "900";
+            mainTitle.style.textDecoration = "underline";
 
             let arrayOfStyleFilters = await getFilter("style", catId)
             if (arrayOfStyleFilters != null) {
                 arrayOfStyleFilters.forEach(type => {
-                    let type_li = document.createElement("li");
+                    let type_li = document.createElement("p");
                     type_li.classList.add("sideFilterType");
                     type_li.innerHTML = type.name;
                     type_li.style.fontWeight = "200";
@@ -604,10 +606,10 @@ async function createSideFilters(catData, catId, gender) {
     mainWrapper.append(wrapper);
 }
 
-export function createFrontPage(){
+export function createFrontPage() {
     let imgWrapper = document.getElementById("first-page-images-wrapper")
 
-    for(let i = 1; i<4; i++){
+    for (let i = 1; i < 4; i++) {
         let imgDiv = document.createElement("div")
         imgDiv.classList.add("first-page-img")
         imgDiv.style.backgroundImage = `url("../images/mix${i}.jpg")`
