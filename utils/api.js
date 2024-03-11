@@ -3,7 +3,7 @@ export async function getCategories() {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'bf17f21073msh199ea9e95ae42c0p13bd29jsn5d27c69e0c55',
+            'X-RapidAPI-Key': 'd4cc899ce2mshd534bc4f8958e7bp140510jsn62374ac680df',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -26,7 +26,7 @@ export async function getProductsByCatId(catId, page) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'bf17f21073msh199ea9e95ae42c0p13bd29jsn5d27c69e0c55',
+            'X-RapidAPI-Key': 'd4cc899ce2mshd534bc4f8958e7bp140510jsn62374ac680df',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -46,7 +46,7 @@ export async function getFilter(filterType, catId) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'bf17f21073msh199ea9e95ae42c0p13bd29jsn5d27c69e0c55',
+            'X-RapidAPI-Key': 'd4cc899ce2mshd534bc4f8958e7bp140510jsn62374ac680df',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -67,7 +67,7 @@ export async function getFilteredProducts(catId, filterstring, page) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'bf17f21073msh199ea9e95ae42c0p13bd29jsn5d27c69e0c55',
+            'X-RapidAPI-Key': 'd4cc899ce2mshd534bc4f8958e7bp140510jsn62374ac680df',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -89,7 +89,7 @@ export async function getProductByProductUrl(productUrl) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'bf17f21073msh199ea9e95ae42c0p13bd29jsn5d27c69e0c55',
+            'X-RapidAPI-Key': 'd4cc899ce2mshd534bc4f8958e7bp140510jsn62374ac680df',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     }
@@ -110,7 +110,7 @@ export async function getSimilarProducts(catId){
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'bf17f21073msh199ea9e95ae42c0p13bd29jsn5d27c69e0c55',
+            'X-RapidAPI-Key': 'd4cc899ce2mshd534bc4f8958e7bp140510jsn62374ac680df',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };

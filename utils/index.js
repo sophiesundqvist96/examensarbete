@@ -1,3 +1,11 @@
+function fixName(name, brandName){
+    let newName = name.toLowerCase()
+    newName = newName.replace(brandName.toLowerCase() + " ", "")
+    let firstLetter = newName.charAt(0).toUpperCase()
+    newName = firstLetter + newName.slice(1);
+
+    return newName
+}
 
 export function createProduct(product){
     // create wrapper for one product
@@ -12,7 +20,7 @@ export function createProduct(product){
     infoDiv.classList.add("product-info")
     infoDiv.innerHTML = `
         <p class="brand-name">${product.brandName.toUpperCase()}</p>
-        <p>${product.name.replace(product.brandName, "").charAt(0).toUpperCase()}</p>
+        <p>${fixName(product.name, product.brandName)}</p>
         <p class="price">${product.price.current.text}</p>`
     
     productWrapper.appendChild(imgDiv)
@@ -20,15 +28,16 @@ export function createProduct(product){
     return productWrapper
 }
 
-export function fillpage(products){
+export function fillpage(products, alt){
     document.getElementById("first-page-images-wrapper").style.display = "none"
     let wrapper = document.getElementById("wrapper")
     products.forEach(product => {
         let productDiv = createProduct(product)
-        console.log(product)
+        console.log(product)    
         productDiv.addEventListener("click", () =>{
             let url = product.url.split("#")
-            window.location.href = `http://localhost:8888/product/product.html?product=${url[0]}&price=${product.price.current.text}`
+            let gender = getMenOrWom()
+            window.location.href = `http://localhost:8888/alt${alt}/alt${alt}.html?gender=${gender}&page=product&url=${url[0]}&price=${product.price.current.text}`
         })
         wrapper.append(productDiv)
     });
@@ -72,7 +81,6 @@ export function createFrontPage(){
 
 export function getUrl(){
     var url = new URL(window.location.href);
-    console.log(url)
     var params = new URLSearchParams(url.search);
     return params;
 }
@@ -85,4 +93,31 @@ export function getMenOrWom(){
     }else{
         return "women"
     }
+}
+
+export function getCatIdFromUrl(){
+    let url = getUrl()
+    let catId = url.get("catId")
+    return catId
+}
+
+export function getTitleFromUrl(){
+    let url = getUrl()
+    let title = url.get("title")
+    return title
+
+}
+
+export function getCategoryTitleFromUrl(){
+    let url = getUrl()
+    let title = url.get("categoryTitle")
+    return title
+
+}
+
+export function getShopByFromUrl(){
+    let url = getUrl()
+    let shopBy = url.get("shopBy")
+    return shopBy
+
 }
