@@ -8,13 +8,6 @@ createBottonListenWoM()
 
 if(getPage() == "product"){
     createProductPage("1")
-    if(getMenOrWom() == "men"){
-        document.getElementById("men").style.fontWeight = "bold"
-        document.getElementById("women").style.fontWeight = "200"
-    }else{
-        document.getElementById("women").style.fontWeight = "bold"
-        document.getElementById("men").style.fontWeight = "200"
-    }
 }else if(getPage() == "category"){
     document.getElementById("single-product-wrapper").style.display = "none"
     createProductsByCategoryPage()

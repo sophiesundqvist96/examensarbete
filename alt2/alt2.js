@@ -64,6 +64,9 @@ export async function createNav() {
         });
 
         document.getElementById("navigation").append(titleDiv)
+        document.getElementById("title").addEventListener("click", ()=>{
+            window.location.href = `http://localhost:8888/alt2/alt2.html`
+        })
     });
 }
 
@@ -123,7 +126,6 @@ function createCategories(womenData, menData, categoryTitle, shopBy) {
         category.addEventListener("click", async() => {
             document.getElementById("hover-div").classList.add("hidden")
             window.location.href = `http://localhost:8888/alt2/alt2.html?page=category&catId=${cat.categoryId}&title=${cat.title}&gender=women&categoryTitle=${categoryTitle}&shopBy=${shopBy}`
-                //fillPageFilterWomen(cat, womenData, "Women")
         });
         if (i < 18) {
             womenDiv1.appendChild(category);
@@ -140,6 +142,10 @@ function createCategories(womenData, menData, categoryTitle, shopBy) {
     menLabel.classList.add("catTitle")
     menDiv1.appendChild(menLabel);
     menDiv1.appendChild(document.createElement("br"));
+    catWrapper.appendChild(womenDiv1);
+    if(i >= 18){
+        catWrapper.appendChild(womenDiv2);
+    }
 
     i = 0;
     menData.forEach((cat, index) => {
@@ -148,7 +154,6 @@ function createCategories(womenData, menData, categoryTitle, shopBy) {
         category.addEventListener("click", async() => {
             document.getElementById("hover-div").classList.add("hidden")
             window.location.href = `http://localhost:8888/alt2/alt2.html?page=category&catId=${cat.categoryId}&title=${cat.title}&gender=men&categoryTitle=${categoryTitle}&shopBy=${shopBy}`
-                //fillPageFilterMen(cat, menData)
         });
         if (i < 18) {
             menDiv1.appendChild(category);
@@ -158,10 +163,10 @@ function createCategories(womenData, menData, categoryTitle, shopBy) {
         i++;
     });
 
-    catWrapper.appendChild(womenDiv1);
-    catWrapper.appendChild(womenDiv2);
     catWrapper.appendChild(menDiv1);
-    catWrapper.appendChild(menDiv2);
+    if(i >= 18){
+        catWrapper.appendChild(menDiv2);
+    }
 
     return catWrapper;
 }
@@ -171,6 +176,7 @@ export async function fillPageFilterWomen(catId, womenData, title) {
     await createAllFilters(catId)
     let products = await getProductsByCatId(catId, 1)
     fillpage(products, "2")
+    createShowMore(catId, 1, null)
     createTypeHeader(title, "Women")
     createSideFilters(womenData, catId, "Women")
 
@@ -180,6 +186,7 @@ export async function fillPageFilterMen(catId, menData, title) {
     await createAllFilters(catId)
     let products = await getProductsByCatId(catId, 1)
     fillpage(products, "2")
+    createShowMore(catId, 1, null)
     createTypeHeader(title, "Men")
     createSideFilters(menData, catId, "Men")
 }
@@ -222,18 +229,6 @@ async function createAllFilters(catId) {
     let filterTypes = ["color"]
         // "brand", "size", "design", "body-fit", "discount", "range", "price-range"];
     createAllFiltersTest(filterTypes, catId)
-
-    /*let allFilterContainer = document.getElementById("all-filters-container");
-    let allFilterWrapper = document.getElementById("all-filters");
-    allFilterWrapper.innerHTML = "";
-    allFilterContainer.innerHTML = ""
-
-
-    /*let filterWrappers = await fetchAllFilters(filterTypes, catId);
-    filterWrappers.forEach(filterWrapper => {
-        allFilterContainer.appendChild(filterWrapper);
-    });
-    allFilterContainer.appendChild(allFilterWrapper);*/
 }
 
 
@@ -289,28 +284,6 @@ async function callFilters(array, catId) {
     return filterWrappers
 
 }
-
-// Skapa en funktion för att hämta filter asynkront med en fördröjning
-/* async function fetchFiltersWithDelay(filter, catId, delay) {
-    await new Promise(resolve => setTimeout(resolve, delay)); // Vänta fördröjning
-    return await getFilter(filter, catId); // Hämta filterdata
-} */
-
-
-
-/* async function fetchAllFilters(filterTypes, catId) {
-    let filterWrappers = [];
-
-    // Loopa igenom filtertyper och hämta dem med fördröjning
-    for (let i = 0; i < filterTypes.length; i++) {
-        let filter = filterTypes[i];
-        let arrayOfFilters = await fetchFiltersWithDelay(filter, catId, 50);
-        let filterWrapper = createFilters(arrayOfFilters, filter, catId);
-        filterWrappers.push(filterWrapper);
-    }
-
-    return filterWrappers;
-} */
 
 
 
@@ -492,6 +465,7 @@ async function clearFilters(selectedFilters, underFiltersContainer, catId) {
     let products = await getProductsByCatId(catId, 1);
     document.getElementById("wrapper").innerHTML = "";
     fillpage(products, "2");
+    createShowMore(catId, 1, null)
     document.getElementById("main-wrapper").append(document.getElementById("wrapper"))
 }
 
@@ -522,6 +496,7 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
     let products = await getFilteredProducts(catId, searchString, 1)
     document.getElementById("wrapper").innerHTML = ""
     fillpage(products, "2")
+    createShowMore(catId, 1, searchString)
     document.getElementById("main-wrapper").append(document.getElementById("wrapper"))
 
 }
@@ -572,7 +547,7 @@ async function createSideFilters(catData, catId, gender) {
                 let newUrl = stringUrl.replace(getCatIdFromUrl(), newCatId)
                 newUrl = newUrl.replace(getTitleFromUrl(), newTitle)
                 window.location.href = newUrl
-                    //fillPageFilterWomen(category, catData); // Skicka med den nya kategorin
+               
 
             } else if (gender == "Men") {
                 let currUrl = new URL(window.location.href);
@@ -583,7 +558,7 @@ async function createSideFilters(catData, catId, gender) {
                 let newUrl = stringUrl.replace(getCatIdFromUrl(), newCatId)
                 newUrl = newUrl.replace(getTitleFromUrl(), newTitle)
                 window.location.href = newUrl
-                    //fillPageFilterMen(category, catData);
+                 
 
             }
             // Uppdatera sidofilter
@@ -615,14 +590,7 @@ async function createSideFilters(catData, catId, gender) {
                         filterOnCheckedItems("style", type.id, "add", category.categoryId)
                     })
                 });
-            } else {
-
-                let sorry = document.createElement("div");
-                sorry.classList.add("sorry")
-                sorry.innerHTML = "Sorry, no products match your filter criteria. Please try adjusting your filters or check back later for updates."
-                wrapper.append(sorry)
-
-            }
+            } 
         }
         mainTitle.appendChild(catList);
         // sideFiltersContainer.appendChild(catTitle);
@@ -642,3 +610,43 @@ export function createFrontPage() {
         imgWrapper.appendChild(imgDiv)
     }
 }
+
+
+async function createShowMore(catId, counter, searchString){
+    let btnBox
+    if(!document.getElementById("btnBox")){
+        btnBox = document.createElement('div')
+        btnBox.id = 'btnBox'
+    }else{
+        btnBox = document.getElementById("btnBox")
+    }
+
+    btnBox.innerHTML = ""
+
+    let btn = document.createElement('div')
+    btn.id = "observer-btn"
+    btn.innerHTML = `<p>SHOW MORE</p>`
+    btn.classList.add('showMore')
+    btnBox.appendChild(btn)
+  
+    let wrapper = document.getElementById('content')
+    wrapper.append(btnBox)
+    btn.addEventListener("click", async ()=>{
+        counter++
+        let products
+        if(searchString == null){
+            products = await getProductsByCatId(catId, counter)
+            console.log("ej search")
+        }else{
+            products = await getFilteredProducts(catId, searchString, counter)
+        }
+
+        if(products.length == 0){
+            btnBox.innerHTML = "No more products to show"
+        }else{
+            fillpage(products, "1")
+
+        }
+    })
+
+  }

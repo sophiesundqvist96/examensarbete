@@ -6,6 +6,7 @@ import { getMenOrWom, getCatIdFromUrl, getTitleFromUrl, getCategoryTitleFromUrl,
 createNav()
 
 if(getPage() == "product"){
+    document.getElementById("single-product-wrapper").style.display = "none"
     createProductPage("2")
 }else if(getPage() == "category"){
     let catId = getCatIdFromUrl()
@@ -20,5 +21,6 @@ if(getPage() == "product"){
         fillPageFilterWomen(catId, womenData, title)
     }
 }else{
+    document.getElementById("single-product-wrapper").style.display = "none"
     createFrontPage()   
 }
