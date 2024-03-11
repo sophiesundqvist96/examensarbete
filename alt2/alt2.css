@@ -1,5 +1,6 @@
 body {
     margin: 0px;
+    font-family: "Montserrat";
 }
 
 #header {
@@ -218,6 +219,8 @@ body {
 .filterNameDiv {
     border: 0.5px solid black;
     padding: 5px;
+    height: fit-content;
+    margin-top: 10px;
 }
 
 #under-filters {
@@ -225,6 +228,7 @@ body {
     margin-left: 30px;
     gap: 10px;
     margin-bottom: 30px;
+    padding-top: 30px;
 }
 
 
@@ -244,7 +248,7 @@ body {
 
 .mainTitle {
     /* padding-left: 15px; */
-    padding-top: 10px;
+    padding-top: 15px;
     list-style-type: none;
     padding-left: 25px;
     cursor: pointer;
@@ -259,6 +263,11 @@ body {
     font-weight: bold;
     margin: 0;
 }
+
+
+/* .sideFilterType:hover {
+    text-decoration: underline;
+} */
 
 .sorry {
     display: flex;

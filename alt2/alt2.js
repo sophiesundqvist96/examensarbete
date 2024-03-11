@@ -219,7 +219,8 @@ async function createAllFilters(catId) {
     }
 
     //Style ska inte finnas här bara i sidefilter sen!
-    let filterTypes = ["color", "brand", "size", "design", "body-fit", "discount", "range", "price-range"];
+    let filterTypes = ["color"]
+        // "brand", "size", "design", "body-fit", "discount", "range", "price-range"];
     createAllFiltersTest(filterTypes, catId)
 
     /*let allFilterContainer = document.getElementById("all-filters-container");
@@ -538,15 +539,16 @@ async function createSideFilters(catData, catId, gender) {
     sideFiltersContainer.classList.add("side-filters-container");
 
     catData.forEach(async category => {
-        let catTitle = document.createElement("div");
-        catTitle.classList.add("sideFilterName");
+        // let catTitle = document.createElement("div");
+        // catTitle.classList.add("sideFilterName");
         let mainTitle = document.createElement("div")
         mainTitle.innerHTML = category.title;
         mainTitle.classList.add("mainTitle")
-        catTitle.appendChild(mainTitle)
+        sideFiltersContainer.appendChild(mainTitle)
 
         // Lägg till en klickhändelselyssnare för att ladda produkter för den valda kategorin och uppdatera sidofilter
         mainTitle.addEventListener("click", () => {
+
             wrapper.innerHTML = "";
             if (typeHeader.length > 0) {
                 typeHeader[0].remove()
@@ -592,7 +594,7 @@ async function createSideFilters(catData, catId, gender) {
 
 
         if (catId == category.categoryId) {
-            mainTitle.style.fontWeight = "900";
+            mainTitle.style.fontWeight = "500";
             mainTitle.style.textDecoration = "underline";
 
             let arrayOfStyleFilters = await getFilter("style", catId)
@@ -605,8 +607,9 @@ async function createSideFilters(catData, catId, gender) {
                     type_li.style.textDecoration = "none";
                     catList.appendChild(type_li);
 
-                    type_li.addEventListener("click", async() => {
-                        type_li.style.fontWeight = "900";
+                    type_li.addEventListener("click", async(event) => {
+                        event.stopPropagation()
+                        type_li.style.fontWeight = "500";
                         type_li.style.textDecoration = "underline";
                         wrapper.innerHTML = "";
                         filterOnCheckedItems("style", type.id, "add", category.categoryId)
@@ -621,8 +624,8 @@ async function createSideFilters(catData, catId, gender) {
 
             }
         }
-        catTitle.appendChild(catList);
-        sideFiltersContainer.appendChild(catTitle);
+        mainTitle.appendChild(catList);
+        // sideFiltersContainer.appendChild(catTitle);
     });
 
     mainWrapper.appendChild(sideFiltersContainer);
