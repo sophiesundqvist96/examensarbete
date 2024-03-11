@@ -1,26 +1,27 @@
 import { getProductByProductUrl, getSimilarProducts} from "../utils/api.js";
-import { createProduct, getUrl } from "../utils/index.js";
-import { createNav } from "../alt1/alt1.js";
+import { createProduct, getUrl} from "../utils/index.js";
  
-createProductPage()
-createNav()
-createButtonListenNav()
-
-
 function getProductUrl(){
     let url = getUrl()
-    let productUrl = url.get('product');
+    let productUrl = url.get('url');
+    console.log(productUrl)
     return productUrl
 }
 
-function getPice(){
+function getPrice(){
     let url = getUrl()
     let price = url.get('price');
     return price
 }
 
+export function getPage(){
+    let url = getUrl()
+    let page = url.get("page")
+    return page
+}
 
-async function createProductPage(){
+
+export async function createProductPage(){
     let productUrl = getProductUrl()
     let productData = await getProductByProductUrl(productUrl)
     console.log(productData)
@@ -70,12 +71,12 @@ function createOneProduct(product){
 
     let orgName = product.name
     let branName = product.brandName
-    let price = getPice()
+    let price = getPrice()
 
     infoWrapper.innerHTML = `<div id="info">
         <p class="brand">${branName}</p>
         <p class="name">${orgName.replace(branName, "")}</p> 
-        <p class="price">Price ${price}</p> 
+        <p class="price-inf">Price ${price}</p> 
         <p class="description"> DESCRIPTION</p>
         <p>${product.description.aboutMe}</p>
         </div>`
@@ -96,8 +97,12 @@ async function createSimilar(catId){
         let productDiv = createProduct(product)
         similarProductWrapper.appendChild(productDiv)
         productDiv.addEventListener("click", () =>{
-            let url = product.url.split("#")
-            window.location.href = `http://localhost:8888/product/product.html?product=${url[0]}&price=${product.price.current.text}`
+            let currUrl = new URL(window.location.href);
+            let stringUrl = currUrl.href
+            let newProduct = product.url.split("#")
+            let newUrl = stringUrl.replace(getProductUrl(), newProduct)
+            newUrl = newUrl.replace(getPrice(), product.price.current.text)
+            window.location.href = newUrl
         })
     });
 
@@ -105,20 +110,3 @@ async function createSimilar(catId){
     
   }
 
-
-  function createButtonListenNav(){
-    let men = document.getElementById("men")
-    let women = document.getElementById("women")
-    let title = document.getElementById("title")
-
-    men.addEventListener("click", () =>{
-        window.location.href = `http://localhost:8888/alt1/alt1.html?gender=men`
-    })
-    women.addEventListener("click", ()=>{
-        window.location.href = `http://localhost:8888/alt1/alt1.html?gender=women`
-    })
-
-    title.addEventListener("click", ()=>{
-        window.location.href = `http://localhost:8888/alt1/alt1.html?gender=women`
-    })
-  }

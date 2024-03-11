@@ -1,9 +1,11 @@
 import { catData,getProductsByCatId, getFilter, getFilteredProducts } from "../utils/api.js";
-import {fillpage, createFrontPageWomen, createFrontPageMen, getUrl, getMenOrWom } from "../utils/index.js"
+import {fillpage, getCatIdFromUrl, getTitleFromUrl, getMenOrWom } from "../utils/index.js"
+
 
 
 export async function createNav(){
     let gender = getMenOrWom()
+    console.log(gender)
 
     let navTitles = [
         {
@@ -50,7 +52,7 @@ export async function createNav(){
                 await createAllFilters(id, title.title)
                 let wrapper = document.getElementById("wrapper")
                 wrapper.innerHTML = ""
-                fillpage(products) 
+                fillpage(products, "1") 
                 createShowMore(id, 1, null)
             } )
         }else{
@@ -137,18 +139,24 @@ function createCategories(allCategories){
         }
         categori.addEventListener("click", async () =>{
             document.getElementById("hover-div").classList.add("hidden")
-            await createAllFilters(cat.categoryId, cat.title)
-            let products = await getProductsByCatId(cat.categoryId, 1)
-            let wrapper = document.getElementById("wrapper")
-            wrapper.innerHTML = ""
-            fillpage(products)
-            createShowMore(cat.categoryId, 1, null)
+           window.location.href = `http://localhost:8888/alt1/alt1.html?page=category&catId=${cat.categoryId}&title=${cat.title}`
         })
     })
     
     catWrapper.appendChild(div1)
     catWrapper.appendChild(div2)
     return catWrapper
+}
+
+export async function createProductsByCategoryPage(){
+    let catId = getCatIdFromUrl()
+    let title = getTitleFromUrl()
+    await createAllFilters(catId, title)
+    let products = await getProductsByCatId(catId, 1)
+    let wrapper = document.getElementById("wrapper")
+    wrapper.innerHTML = ""
+    fillpage(products, "1")
+    createShowMore(catId, 1, null)
 }
 
 async function createAllFilters(catId, title){
@@ -185,7 +193,7 @@ function createPageTitle(title){
     let gender = getMenOrWom()
 
     let titleDiv = document.getElementById("cat-title")
-    titleDiv.innerHTML = `<h1>${title} For ${gender.charAt(0).toUpperCase()}</h1>`
+    titleDiv.innerHTML = `<h1>${title} For ${gender.charAt(0).toUpperCase() + gender.slice(1)}</h1>`
 }
 
 function createFilters(arrayOfFilters, filterTitle, catId){
@@ -292,7 +300,7 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId){
     createFilterCount(filterAmount, catId)
     let wrapper = document.getElementById("wrapper")
     wrapper.innerHTML = ""
-    fillpage(products)
+    fillpage(products, "1")
     createShowMore(catId, 1, searchString)
 }
 
@@ -318,7 +326,7 @@ function createFilterCount(count, catId){
         let products = await getProductsByCatId(catId, 1)
         let wrapper = document.getElementById("wrapper")
         wrapper.innerHTML = ""
-        fillpage(products)
+        fillpage(products, "1")
         createShowMore(catId, 1, null)
         createFilterCount(0 , catId)
     })
@@ -363,7 +371,7 @@ async function createShowMore(catId, counter, searchString){
             console.log(searchString)
         }
 
-        fillpage(products)
+        fillpage(products, "1")
       },
       {
         // threshold is used to observe if btn is fully vissible on screen, 1 = 100%
@@ -375,4 +383,4 @@ async function createShowMore(catId, counter, searchString){
   }
 
  
-  
+

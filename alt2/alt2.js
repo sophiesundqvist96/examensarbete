@@ -1,9 +1,8 @@
 import { catData, getProductsByCatId, getFilter, getFilteredProducts } from "../utils/api.js";
-import { fillpage } from "../utils/index.js"
+import { fillpage, getCatIdFromUrl, getTitleFromUrl } from "../utils/index.js"
 
-createNav()
 
-async function createNav() {
+export async function createNav() {
     let navTitles = [{
             title: "New in",
             id: 51163
@@ -41,7 +40,6 @@ async function createNav() {
         let titleDiv = document.createElement("div")
         titleDiv.classList.add("nav-title")
         titleDiv.innerHTML = title.title
-        let products
 
         titleDiv.addEventListener("mouseenter", () => {
             // Ta bort eventuellt befintligt hover-div
@@ -70,8 +68,6 @@ async function createNav() {
 }
 
 function createHoverDiv(titleDiv, catData, categoryTitle) {
-    console.log(categoryTitle)
-    console.log(catData)
     let hoverDiv = document.createElement("div");
     hoverDiv.id = "hover-div";
     hoverDiv.classList.add("hidden")
@@ -84,23 +80,20 @@ function createHoverDiv(titleDiv, catData, categoryTitle) {
     } else if (categoryTitle.toLowerCase() === "shoes") {
         shopBy = "SHOP BY STYLE";
     } else if (categoryTitle.toLowerCase() === "new in") {
-        console.log(categoryTitle.toLowerCase())
         shopBy = "NEW PRODUCTS";
     }
-
-    console.log(shopBy);
 
     let womenData = catData.Women.children.find(child => child.title == "Categories").children.find(child => child.title == categoryTitle).children.find(child => child.title == shopBy).children
     let menData = catData.Men.children.find(child => child.title == "Categories").children.find(child => child.title == categoryTitle).children.find(child => child.title == shopBy).children
 
 
-    let categoriesWrapper = createCategories(womenData, menData);
+    let categoriesWrapper = createCategories(womenData, menData, categoryTitle, shopBy);
     hoverDiv.appendChild(categoriesWrapper);
     titleDiv.append(hoverDiv);
     return hoverDiv
 }
 
-function createCategories(womenData, menData) {
+function createCategories(womenData, menData, categoryTitle, shopBy) {
     let catWrapper = document.createElement("div");
     catWrapper.id = "cat-wrapper";
 
@@ -124,14 +117,13 @@ function createCategories(womenData, menData) {
     womenDiv1.appendChild(womenLabel);
     womenDiv1.appendChild(document.createElement("br"));
 
-    let products;
-
     womenData.forEach((cat, index) => {
         let category = document.createElement("p");
         category.innerHTML = cat.title;
         category.addEventListener("click", async() => {
             document.getElementById("hover-div").classList.add("hidden")
-            fillPageFilterWomen(cat, womenData, "Women")
+            window.location.href = `http://localhost:8888/alt2/alt2.html?page=category&catId=${cat.categoryId}&title=${cat.title}&gender=women&categoryTitle=${categoryTitle}&shopBy=${shopBy}`
+            //fillPageFilterWomen(cat, womenData, "Women")
         });
         if (i < 18) {
             womenDiv1.appendChild(category);
@@ -155,9 +147,8 @@ function createCategories(womenData, menData) {
         category.innerHTML = cat.title;
         category.addEventListener("click", async() => {
             document.getElementById("hover-div").classList.add("hidden")
-            fillPageFilterMen(cat, menData)
-
-
+            window.location.href = `http://localhost:8888/alt2/alt2.html?page=category&catId=${cat.categoryId}&title=${cat.title}&gender=men&categoryTitle=${categoryTitle}&shopBy=${shopBy}`
+            //fillPageFilterMen(cat, menData)
         });
         if (i < 18) {
             menDiv1.appendChild(category);
@@ -175,22 +166,22 @@ function createCategories(womenData, menData) {
     return catWrapper;
 }
 
-async function fillPageFilterWomen(cat, womenData) {
+export async function fillPageFilterWomen(catId, womenData, title) {
 
-    await createAllFilters(cat.categoryId)
-    let products = await getProductsByCatId(cat.categoryId, 1)
-    fillpage(products)
-    createTypeHeader(cat.title, "Women")
-    createSideFilters(womenData, cat, "Women")
+    await createAllFilters(catId)
+    let products = await getProductsByCatId(catId, 1)
+    fillpage(products, "2")
+    createTypeHeader(title, "Women")
+    createSideFilters(womenData, catId, "Women")
 
 }
 
-async function fillPageFilterMen(cat, menData) {
-    await createAllFilters(cat.categoryId)
-    let products = await getProductsByCatId(cat.categoryId, 1)
-    fillpage(products)
-    createTypeHeader(cat.title, "Men")
-    createSideFilters(menData, cat, "Men")
+export async function fillPageFilterMen(catId, menData, title) {
+    await createAllFilters(catId)
+    let products = await getProductsByCatId(catId, 1)
+    fillpage(products, "2")
+    createTypeHeader(title, "Men")
+    createSideFilters(menData, catId, "Men")
 }
 
 function createTypeHeader(productType, gender) {
@@ -210,8 +201,6 @@ function createTypeHeader(productType, gender) {
 }
 
 async function createAllFilters(catId) {
-
-    const mainWrapper = document.getElementById("main-wrapper");
     const wrapper = document.getElementById("wrapper");
     const underFilters = document.getElementById("under-filters");
     const typeHeader = document.getElementsByClassName("typeHeader");
@@ -231,20 +220,71 @@ async function createAllFilters(catId) {
 
     //Style ska inte finnas här bara i sidefilter sen!
     let filterTypes = ["color", "brand", "size", "design", "body-fit", "discount", "range", "price-range"];
-    let allFilterContainer = document.getElementById("all-filters-container");
+    createAllFiltersTest(filterTypes, catId)
+
+    /*let allFilterContainer = document.getElementById("all-filters-container");
     let allFilterWrapper = document.getElementById("all-filters");
     allFilterWrapper.innerHTML = "";
     allFilterContainer.innerHTML = ""
 
 
-    let filterWrappers = await fetchAllFilters(filterTypes, catId);
+    /*let filterWrappers = await fetchAllFilters(filterTypes, catId);
     filterWrappers.forEach(filterWrapper => {
         allFilterContainer.appendChild(filterWrapper);
     });
-    allFilterContainer.appendChild(allFilterWrapper);
+    allFilterContainer.appendChild(allFilterWrapper);*/
 }
 
-async function fetchAllFilters(filterTypes, catId) {
+
+async function createAllFiltersTest(filterTypes, catId){
+    let allFilterContainer = document.getElementById("all-filters-container")
+    allFilterContainer.innerHTML = ""
+    let half = Math.floor(filterTypes.length / 2);
+    let arr1 = filterTypes.slice(0, half);
+    console.log(arr1)
+    let  arr2 = filterTypes.slice(half);
+
+    let filterswrapper1 =  await callFilters(arr1, catId)
+    let filterswrapper2 = await new Promise((resolve, reject) => {
+        setTimeout(async () => {
+            resolve(await callFilters(arr2, catId));
+        }, 1500); // Fördröj anropet med 1000 ms
+    });
+    let filters = filterswrapper1.concat(filterswrapper2)
+
+    filters.forEach(filterWrapper => {
+        if(filterWrapper != null){
+            allFilterContainer.appendChild(filterWrapper);
+        }
+    });
+
+}
+
+async function callFilters(array, catId){
+    let asyncFilterPromises = array.map(async filter => {
+        let arrayOfFilters = await getFilter(filter, catId); // Vänta på att getFilter ska slutföras
+        let filterWrapper = null
+        console.log(arrayOfFilters)
+        if(arrayOfFilters != null){
+            filterWrapper = createFilters(arrayOfFilters, filter, catId);
+        }
+        return filterWrapper;
+    });
+
+    let filterWrappers = await Promise.all(asyncFilterPromises);
+    return filterWrappers
+
+}
+
+// Skapa en funktion för att hämta filter asynkront med en fördröjning
+/* async function fetchFiltersWithDelay(filter, catId, delay) {
+    await new Promise(resolve => setTimeout(resolve, delay)); // Vänta fördröjning
+    return await getFilter(filter, catId); // Hämta filterdata
+} */
+
+
+
+/* async function fetchAllFilters(filterTypes, catId) {
     let filterWrappers = [];
 
     // Loopa igenom filtertyper och hämta dem med fördröjning
@@ -256,13 +296,9 @@ async function fetchAllFilters(filterTypes, catId) {
     }
 
     return filterWrappers;
-}
+} */
 
-// Skapa en funktion för att hämta filter asynkront med en fördröjning
-async function fetchFiltersWithDelay(filter, catId, delay) {
-    await new Promise(resolve => setTimeout(resolve, delay)); // Vänta fördröjning
-    return await getFilter(filter, catId); // Hämta filterdata
-}
+
 
 let filterItems = [{
         title: "style",
@@ -426,7 +462,6 @@ function handleCheckboxUnchecked(selectedFilters, underFiltersContainer, filter)
 async function clearFilters(selectedFilters, underFiltersContainer, catId) {
 
     selectedFilters.splice(0, selectedFilters.length); // Detta kommer att tömma hela arrayen
-    console.log(selectedFilters)
 
     let allInputs = Array.from(document.querySelectorAll("input"));
     let checkedInputs = allInputs.filter(input => input.checked == true);
@@ -442,15 +477,12 @@ async function clearFilters(selectedFilters, underFiltersContainer, catId) {
 
     let products = await getProductsByCatId(catId, 1);
     document.getElementById("wrapper").innerHTML = "";
-    fillpage(products);
+    fillpage(products, "2");
     document.getElementById("main-wrapper").append(document.getElementById("wrapper"))
 }
 
 
 async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
-    console.log(title)
-    console.log(checkedItem)
-    console.log(catId)
     if (addOrdDelete == "add") {
         filterItems.find(item => item.title == title).checkedItems.push(checkedItem)
     } else {
@@ -458,7 +490,6 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
     }
 
     let filter = filterItems.filter(item => item.checkedItems.length > 0)
-    console.log(filter)
     let searchString = ""
     for (let i = 0; i < filter.length; i++) {
         if (i > 0) {
@@ -470,24 +501,18 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
             if (j > 0) {
                 searchString += ","
             }
-            console.log(filter[i].checkedItems[j])
-
             searchString += filter[i].checkedItems[j]
         }
     }
 
-    console.log(catId)
-    console.log(searchString)
     let products = await getFilteredProducts(catId, searchString, 1)
     document.getElementById("wrapper").innerHTML = ""
-    fillpage(products)
+    fillpage(products, "2")
     document.getElementById("main-wrapper").append(document.getElementById("wrapper"))
 
 }
 
-async function createSideFilters(catData, cat, gender) {
-    console.log(catData);
-    console.log(cat);
+async function createSideFilters(catData, catId, gender) {
     const mainWrapper = document.getElementById("main-wrapper");
     const wrapper = document.getElementById("wrapper");
     const underFilters = document.getElementById("under-filters");
@@ -505,10 +530,8 @@ async function createSideFilters(catData, cat, gender) {
         catTitle.innerHTML = category.title;
 
         // Lägg till en klickhändelselyssnare för att ladda produkter för den valda kategorin och uppdatera sidofilter
-        catTitle.addEventListener("click", async() => {
-            console.log(category);
+        catTitle.addEventListener("click", () => {
             wrapper.innerHTML = "";
-            console.log(underFilters)
             if (typeHeader.length > 0) {
                 typeHeader[0].remove()
             }
@@ -522,52 +545,56 @@ async function createSideFilters(catData, cat, gender) {
             // Hämta produkter för den valda kategorin
 
             if (gender == "Women") {
-                fillPageFilterWomen(category, catData); // Skicka med den nya kategorin
+                let currUrl = new URL(window.location.href);
+                let stringUrl = currUrl.href
+                
+
+                let newCatId = category.categoryId
+                let newTitle = category.title
+                let newUrl = stringUrl.replace(getCatIdFromUrl(), newCatId)
+                newUrl = newUrl.replace(getTitleFromUrl(), newTitle)
+                window.location.href = newUrl
+                //fillPageFilterWomen(category, catData); // Skicka med den nya kategorin
 
             } else if (gender == "Men") {
-                fillPageFilterMen(category, catData);
+                let currUrl = new URL(window.location.href);
+                let stringUrl = currUrl.href
+                
+                let newCatId = category.categoryId
+                let newTitle = category.title
+                let newUrl = stringUrl.replace(getCatIdFromUrl(), newCatId)
+                newUrl = newUrl.replace(getTitleFromUrl(), newTitle)
+                window.location.href = newUrl
+                //fillPageFilterMen(category, catData);
 
             }
             // Uppdatera sidofilter
-            createSideFilters(catData, category);
+            //createSideFilters(catData, category);
         });
 
         let catList = document.createElement("ul"); // Skapa en lista för underkategorierna
 
 
-        if (cat.categoryId == category.categoryId) {
+        if (catId == category.categoryId) {
             catTitle.style.fontWeight = "900";
             catTitle.style.textDecoration = "underline";
 
-            let filterTypes = ["style"];
-            let asyncFilterPromises = filterTypes.map(async filter => {
-                let arrayOfFilters = await getFilter(filter, cat.categoryId);
-                if (arrayOfFilters == null) {
-                    let sorry = document.createElement("div");
-                    sorry.classList.add("sorry")
-                    sorry.innerHTML = "Sorry, no products match your filter criteria. Please try adjusting your filters or check back later for updates."
-                    wrapper.append(sorry)
-                }
-                console.log(arrayOfFilters);
-                if (arrayOfFilters) {
-                    arrayOfFilters.forEach(type => {
-                        let type_li = document.createElement("li");
-                        type_li.classList.add("sideFilterType");
-                        type_li.innerHTML = type.name;
-                        type_li.style.fontWeight = "200";
-                        type_li.style.textDecoration = "none";
-                        catList.appendChild(type_li);
+            let arrayOfStyleFilters = await getFilter("style", catId)
+            if (arrayOfStyleFilters != null) {
+                arrayOfStyleFilters.forEach(type => {
+                    let type_li = document.createElement("li");
+                    type_li.classList.add("sideFilterType");
+                    type_li.innerHTML = type.name;
+                    type_li.style.fontWeight = "200";
+                    type_li.style.textDecoration = "none";
+                    catList.appendChild(type_li);
 
-                        type_li.addEventListener("click", async() => {
-                            console.log(cat.title)
-                            console.log(category.categoryId)
-                            console.log(cat.categoryId)
-                            wrapper.innerHTML = "";
-                            filterOnCheckedItems("style", type.id, "add", category.categoryId)
-                        })
-                    });
-                }
-            })
+                    type_li.addEventListener("click", async() => {
+                        wrapper.innerHTML = "";
+                        filterOnCheckedItems("style", type.id, "add", category.categoryId)
+                    })
+                });
+            }
         }
         catTitle.appendChild(catList);
         sideFiltersContainer.appendChild(catTitle);
@@ -575,4 +602,15 @@ async function createSideFilters(catData, cat, gender) {
 
     mainWrapper.appendChild(sideFiltersContainer);
     mainWrapper.append(wrapper);
+}
+
+export function createFrontPage(){
+    let imgWrapper = document.getElementById("first-page-images-wrapper")
+
+    for(let i = 1; i<4; i++){
+        let imgDiv = document.createElement("div")
+        imgDiv.classList.add("first-page-img")
+        imgDiv.style.backgroundImage = `url("../images/mix${i}.jpg")`
+        imgWrapper.appendChild(imgDiv)
+    }
 }

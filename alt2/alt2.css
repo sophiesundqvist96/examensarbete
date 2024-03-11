@@ -1,3 +1,7 @@
+body{
+    margin: 0px;
+}
+
 #header {
     height: 110px;
     display: flex;
@@ -32,10 +36,12 @@
     align-items: center;
     margin-right: 50px;
     position: relative;
+    padding: 10px;
 }
 
 .nav-title:hover {
     cursor: pointer;
+    font-weight: bold;
 }
 
 #wrapper {
@@ -60,12 +66,14 @@
 
 #hover-div {
     position: absolute;
-    top: 50px;
-    width: max-content;
-    background-color: lightgray;
+    top: 51px;
+    width: 60vw;
+    background-color: white;
     left: -100px;
     padding: 40px;
     z-index: 3;
+    border: 1px solid;
+    border-top: 0px;
 }
 
 #cat-wrapper {
@@ -83,10 +91,12 @@
 
 #cat-wrapper>div>p {
     margin: 2px;
+    font-weight: 200;
 }
 
 #cat-wrapper>div>p:hover {
     cursor: pointer;
+    font-weight: bold;
 }
 
 .hidden {
@@ -95,14 +105,14 @@
 
 .catTitle {
     font-weight: bolder;
-    font-size: 30px;
+    font-size: 20px;
 }
 
 .category-column2 {
     padding-top: 60px;
 }
 
-#all-filters-container {
+/*#all-filters-container {
     height: fit-content;
     padding: 20px;
 }
@@ -116,7 +126,6 @@
 
 .filter-wrapper {
     position: relative;
-    /* Gör filtreringsrubriken relativ till sitt förälderelement */
     display: inline-block;
     min-width: 160px;
     border-top: 0.5px solid;
@@ -136,7 +145,45 @@
 
 .filter-wrapper>div:nth-child(1)>div {
     flex-grow: 1;
+}*/
+#top{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
+
+#type{
+    padding-top: 20px;
+}
+
+#all-filters-container{
+    display: grid;
+    grid-template-columns: repeat(5, 160px);
+    gap: 15px;
+}
+
+.filter-wrapper{
+    position: relative;
+    display: inline-block;
+    min-width: 160px;
+    border-top: 0.5px solid;
+    border-bottom: 0.5px solid;
+    margin: 10px;
+}
+
+.filter-wrapper > div:nth-child(1){
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.filter-wrapper > div:nth-child(1) > div{
+    flex-grow: 1;
+}
+
 
 .dropdown-content {
     display: none;
@@ -145,7 +192,7 @@
     min-width: 160px;
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 1;
-    height: 200px;
+    max-height: 200px;
     overflow: scroll;
 }
 
@@ -179,13 +226,6 @@
     margin-bottom: 30px;
 }
 
-#type {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 20vh;
-}
-
 .sideFilterName ul {
     list-style-type: none;
     padding-left: 20px;
@@ -213,4 +253,22 @@
     padding-top: 100px;
     font-style: oblique;
     font-size: larger;
+}
+
+#first-page-images-wrapper{
+    display: flex;
+    border-top: 15px solid black;
+    border-bottom: 10px solid black;
+}
+
+.first-page-img{
+    flex-grow: 1;
+    height: 650px;
+    background-position: center;
+    background-size: cover;
+}
+
+li:hover{
+    cursor: pointer;
+    font-weight: bold;
 }
