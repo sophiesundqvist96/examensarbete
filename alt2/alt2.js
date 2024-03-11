@@ -125,7 +125,8 @@ function createCategories(womenData, menData, categoryTitle, shopBy) {
         category.innerHTML = cat.title;
         category.addEventListener("click", async() => {
             document.getElementById("hover-div").classList.add("hidden")
-            window.location.href = `http://localhost:8888/alt2/alt2.html?page=category&catId=${cat.categoryId}&title=${cat.title}&gender=women&categoryTitle=${categoryTitle}&shopBy=${shopBy}`
+            let title = encodeURIComponent(cat.title);
+            window.location.href = `http://localhost:8888/alt2/alt2.html?page=category&catId=${cat.categoryId}&title=${title}&gender=women&categoryTitle=${categoryTitle}&shopBy=${shopBy}`
         });
         if (i < 18) {
             womenDiv1.appendChild(category);
@@ -153,7 +154,8 @@ function createCategories(womenData, menData, categoryTitle, shopBy) {
         category.innerHTML = cat.title;
         category.addEventListener("click", async() => {
             document.getElementById("hover-div").classList.add("hidden")
-            window.location.href = `http://localhost:8888/alt2/alt2.html?page=category&catId=${cat.categoryId}&title=${cat.title}&gender=men&categoryTitle=${categoryTitle}&shopBy=${shopBy}`
+            let title = encodeURIComponent(cat.title);
+            window.location.href = `http://localhost:8888/alt2/alt2.html?page=category&catId=${cat.categoryId}&title=${title}&gender=men&categoryTitle=${categoryTitle}&shopBy=${shopBy}`
         });
         if (i < 18) {
             menDiv1.appendChild(category);
@@ -494,8 +496,14 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
     if (addOrdDelete == "add") {
         filterItems.find(item => item.title == title).checkedItems.push(checkedItem)
     } else {
-        filterItems.find(item => item.title == title).checkedItems.pop(checkedItem)
+        let object = filterItems.find(item => item.title == title)
+        let index = object.checkedItems.indexOf(checkedItem)
+        if (index !== -1) {
+            object.checkedItems.splice(index, 1);
+        }
     }
+
+    console.log(filterItems)
 
     let filter = filterItems.filter(item => item.checkedItems.length > 0)
     let searchString = ""
@@ -558,26 +566,30 @@ async function createSideFilters(catData, catId, gender) {
 
             if (gender == "Women") {
                 let currUrl = new URL(window.location.href);
-                let stringUrl = currUrl.href
-                let newCatId = category.categoryId
-                let newTitle = category.title
-                console.log(newTitle)
-                let newUrl = stringUrl.replace(getCatIdFromUrl(), newCatId)
-                newUrl = newUrl.replace(getTitleFromUrl(), newTitle)
+                let stringUrl = currUrl.href;
+                let newCatId = category.categoryId;
+                let newTitle = decodeURIComponent(category.title) // Uppdaterad för att använda decodeURIComponent()
+                console.log(newTitle);
+                let oldTitle = encodeURIComponent(getTitleFromUrl())
+                console.log(oldTitle)
+                let newUrl = stringUrl.replace(getCatIdFromUrl(), newCatId);
+                newUrl = newUrl.replace(oldTitle, newTitle);
+                console.log(newUrl)
                 window.location.href = newUrl
 
 
             } else if (gender == "Men") {
                 let currUrl = new URL(window.location.href);
-                let stringUrl = currUrl.href
-
-                let newCatId = category.categoryId
-                let newTitle = category.title
-                let newUrl = stringUrl.replace(getCatIdFromUrl(), newCatId)
-                newUrl = newUrl.replace(getTitleFromUrl(), newTitle)
+                let stringUrl = currUrl.href;
+                let newCatId = category.categoryId;
+                let newTitle = decodeURIComponent(category.title) // Uppdaterad för att använda decodeURIComponent()
+                console.log(newTitle);
+                let oldTitle = encodeURIComponent(getTitleFromUrl())
+                console.log(oldTitle)
+                let newUrl = stringUrl.replace(getCatIdFromUrl(), newCatId);
+                newUrl = newUrl.replace(oldTitle, newTitle);
+                console.log(newUrl)
                 window.location.href = newUrl
-
-
             }
             // Uppdatera sidofilter
             //createSideFilters(catData, category);
@@ -602,10 +614,20 @@ async function createSideFilters(catData, catId, gender) {
 
                     type_li.addEventListener("click", async(event) => {
                         event.stopPropagation()
-                        type_li.style.fontWeight = "500";
-                        type_li.style.textDecoration = "underline";
-                        wrapper.innerHTML = "";
-                        filterOnCheckedItems("style", type.id, "add", category.categoryId)
+                        if(checkIfAlreadyChecked(type.id)){
+                            console.log(type.id)
+                            wrapper.innerHTML = "";
+                            type_li.style.fontWeight = "200";
+                            type_li.style.textDecoration = "none";
+                            filterOnCheckedItems("style", type.id, "delete", category.categoryId)
+                            console.log(filterItems)
+                        }else{
+                            type_li.style.fontWeight = "500";
+                            type_li.style.textDecoration = "underline";
+                            wrapper.innerHTML = "";
+                            filterOnCheckedItems("style", type.id, "add", category.categoryId)
+                            console.log(filterItems)
+                        }
                     })
                 });
             }
@@ -616,6 +638,20 @@ async function createSideFilters(catData, catId, gender) {
 
     mainWrapper.appendChild(sideFiltersContainer);
     mainWrapper.append(wrapper);
+}
+
+function checkIfAlreadyChecked(typeId){
+    console.log(typeId)
+    console.log(filterItems)
+    let checkedStyleIds = filterItems.find(filter => filter.title == "style").checkedItems
+    console.log(checkedStyleIds)
+    if(checkedStyleIds.includes(typeId)){
+        console.log("yes")
+        return true
+    }else{
+        console.log("nej")
+        return false
+    }
 }
 
 export function createFrontPage() {
