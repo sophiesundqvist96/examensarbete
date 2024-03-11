@@ -113,10 +113,10 @@ export function getCatIdFromUrl(){
 }
 
 export function getTitleFromUrl(){
-    let url = getUrl()
-    let title = url.get("title")
+    let currUrl = new URL(window.location.href);
+    let title = decodeURIComponent(currUrl.searchParams.get("title"));
+    console.log(title)
     return title
-
 }
 
 export function getCategoryTitleFromUrl(){

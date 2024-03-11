@@ -146,7 +146,8 @@ function createCategories(allCategories, gender){
         }
         categori.addEventListener("click", async () =>{
             document.getElementById("hover-div").classList.add("hidden")
-           window.location.href = `http://localhost:8888/alt1/alt1.html?page=category&gender=${gender}&catId=${cat.categoryId}&title=${cat.title}`
+            let title = decodeURIComponent(cat.title)
+           window.location.href = `http://localhost:8888/alt1/alt1.html?page=category&gender=${gender}&catId=${cat.categoryId}&title=${title}`
         })
     })
     
@@ -289,7 +290,11 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId){
     if(addOrdDelete == "add"){
         filterItems.find(item => item.title == title).checkedItems.push(checkedItem)
     }else{
-        filterItems.find(item => item.title == title).checkedItems.pop(checkedItem)
+        let object = filterItems.find(item => item.title == title)
+        let index = object.checkedItems.indexOf(checkedItem)
+        if (index !== -1) {
+            object.checkedItems.splice(index, 1);
+        }
     }
 
     let filter = filterItems.filter(item => item.checkedItems.length > 0)
