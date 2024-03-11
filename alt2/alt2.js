@@ -64,7 +64,7 @@ export async function createNav() {
         });
 
         document.getElementById("navigation").append(titleDiv)
-        document.getElementById("title").addEventListener("click", ()=>{
+        document.getElementById("title").addEventListener("click", () => {
             window.location.href = `http://localhost:8888/alt2/alt2.html`
         })
     });
@@ -114,7 +114,7 @@ function createCategories(womenData, menData, categoryTitle, shopBy) {
 
     let i = 0;
     // WOMEN Categories
-    let womenLabel = document.createElement("p");
+    let womenLabel = document.createElement("h3");
     womenLabel.classList.add("catTitle")
     womenLabel.innerHTML = "WOMEN";
     womenDiv1.appendChild(womenLabel);
@@ -137,13 +137,13 @@ function createCategories(womenData, menData, categoryTitle, shopBy) {
     });
 
     // MEN Categories
-    let menLabel = document.createElement("p");
+    let menLabel = document.createElement("h3");
     menLabel.innerHTML = "MEN"
     menLabel.classList.add("catTitle")
     menDiv1.appendChild(menLabel);
     menDiv1.appendChild(document.createElement("br"));
     catWrapper.appendChild(womenDiv1);
-    if(i >= 18){
+    if (i >= 18) {
         catWrapper.appendChild(womenDiv2);
     }
 
@@ -164,7 +164,7 @@ function createCategories(womenData, menData, categoryTitle, shopBy) {
     });
 
     catWrapper.appendChild(menDiv1);
-    if(i >= 18){
+    if (i >= 18) {
         catWrapper.appendChild(menDiv2);
     }
 
@@ -172,7 +172,7 @@ function createCategories(womenData, menData, categoryTitle, shopBy) {
 }
 
 export async function fillPageFilterWomen(catId, womenData, title) {
-
+    console.log(title)
     await createAllFilters(catId)
     let products = await getProductsByCatId(catId, 1)
     fillpage(products, "2")
@@ -229,6 +229,7 @@ async function createAllFilters(catId) {
     let filterTypes = ["color"]
         // "brand", "size", "design", "body-fit", "discount", "range", "price-range"];
     createAllFiltersTest(filterTypes, catId)
+
 }
 
 
@@ -394,12 +395,15 @@ function handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, f
 
     let clearButton = underFiltersContainer.querySelector(".clear-button");
 
+
+
     if (!clearButton) {
         clearButton = document.createElement("p");
         clearButton.classList.add("clear-button");
         clearButton.innerHTML = "Clear all";
         underFiltersContainer.appendChild(clearButton);
     }
+
 
     clearButton.addEventListener("click", async() => {
         clearFilters(selectedFilters, underFiltersContainer, catId)
@@ -418,6 +422,14 @@ function handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, f
             const index = selectedFilters.indexOf(filter.name);
             if (index !== -1) {
                 selectedFilters.splice(index, 1);
+            }
+
+            if (underFiltersContainer.querySelectorAll(`.filterNameDiv`).length === 0) {
+                console.log(underFiltersContainer.querySelectorAll(`.filterNameDiv`).length === 0)
+                let clearButton = underFiltersContainer.querySelector(".clear-button");
+                if (clearButton) {
+                    clearButton.remove();
+                }
             }
 
 
@@ -442,7 +454,15 @@ function handleCheckboxUnchecked(selectedFilters, underFiltersContainer, filter)
                 selectedFilters.splice(index, 1);
             }
         }
+
     });
+    if (underFiltersContainer.querySelectorAll(`.filterNameDiv`).length === 0) {
+        console.log(underFiltersContainer.querySelectorAll(`.filterNameDiv`).length === 0)
+        let clearButton = underFiltersContainer.querySelector(".clear-button");
+        if (clearButton) {
+            clearButton.remove();
+        }
+    }
 
 }
 
@@ -530,7 +550,6 @@ async function createSideFilters(catData, catId, gender) {
             }
             underFilters.innerHTML = ""
 
-
             if (allFilters.length > 0) {
                 allFilters[0].remove()
             }
@@ -540,14 +559,13 @@ async function createSideFilters(catData, catId, gender) {
             if (gender == "Women") {
                 let currUrl = new URL(window.location.href);
                 let stringUrl = currUrl.href
-
-
                 let newCatId = category.categoryId
                 let newTitle = category.title
+                console.log(newTitle)
                 let newUrl = stringUrl.replace(getCatIdFromUrl(), newCatId)
                 newUrl = newUrl.replace(getTitleFromUrl(), newTitle)
                 window.location.href = newUrl
-               
+
 
             } else if (gender == "Men") {
                 let currUrl = new URL(window.location.href);
@@ -558,7 +576,7 @@ async function createSideFilters(catData, catId, gender) {
                 let newUrl = stringUrl.replace(getCatIdFromUrl(), newCatId)
                 newUrl = newUrl.replace(getTitleFromUrl(), newTitle)
                 window.location.href = newUrl
-                 
+
 
             }
             // Uppdatera sidofilter
@@ -590,7 +608,7 @@ async function createSideFilters(catData, catId, gender) {
                         filterOnCheckedItems("style", type.id, "add", category.categoryId)
                     })
                 });
-            } 
+            }
         }
         mainTitle.appendChild(catList);
         // sideFiltersContainer.appendChild(catTitle);
@@ -612,12 +630,12 @@ export function createFrontPage() {
 }
 
 
-async function createShowMore(catId, counter, searchString){
+async function createShowMore(catId, counter, searchString) {
     let btnBox
-    if(!document.getElementById("btnBox")){
+    if (!document.getElementById("btnBox")) {
         btnBox = document.createElement('div')
         btnBox.id = 'btnBox'
-    }else{
+    } else {
         btnBox = document.getElementById("btnBox")
     }
 
@@ -628,25 +646,25 @@ async function createShowMore(catId, counter, searchString){
     btn.innerHTML = `<p>SHOW MORE</p>`
     btn.classList.add('showMore')
     btnBox.appendChild(btn)
-  
+
     let wrapper = document.getElementById('content')
     wrapper.append(btnBox)
-    btn.addEventListener("click", async ()=>{
+    btn.addEventListener("click", async() => {
         counter++
         let products
-        if(searchString == null){
+        if (searchString == null) {
             products = await getProductsByCatId(catId, counter)
             console.log("ej search")
-        }else{
+        } else {
             products = await getFilteredProducts(catId, searchString, counter)
         }
 
-        if(products.length == 0){
+        if (products.length == 0) {
             btnBox.innerHTML = "No more products to show"
-        }else{
+        } else {
             fillpage(products, "1")
 
         }
     })
 
-  }
+}
