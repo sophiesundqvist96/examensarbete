@@ -1,3 +1,8 @@
+body{
+    margin: 0px;
+    font-family: "Montserrat";
+}
+
 #all-filters{
     display: flex;
     justify-content: center;
@@ -99,3 +104,11 @@
     font-weight: bold;
 }
 
+.sorry {
+    display: flex;
+    justify-content: center;
+    width: 70vw;
+    padding-top: 100px;
+    font-style: oblique;
+    font-size: larger;
+}

@@ -68,7 +68,6 @@ body {
 #hover-div {
     position: absolute;
     top: 51px;
-    width: 60vw;
     background-color: white;
     left: -100px;
     padding: 40px;
@@ -80,11 +79,9 @@ body {
 #cat-wrapper {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
+    gap: 30px;
 }
 
-#hover-div> :nth-child(1) {
-    margin-bottom: 30px;
-}
 
 #cat-wrapper>div {
     flex-grow: 1;
@@ -93,6 +90,7 @@ body {
 #cat-wrapper>div>p {
     margin: 2px;
     font-weight: 200;
+    font-size: 11pt;
 }
 
 #cat-wrapper>div>p:hover {
@@ -104,12 +102,10 @@ body {
     display: none;
 }
 
-.catTitle {
-    font-weight: bolder;
-    font-size: 20px;
-}
+
 
 .category-column2 {
+    padding: 20px;
     padding-top: 60px;
 }
 
@@ -289,4 +285,37 @@ body {
     height: 650px;
     background-position: center;
     background-size: cover;
+}
+
+#btnBox{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 30px;
+}
+
+#observer-btn{
+    border: 1px solid;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 10pt;
+}
+
+#observer-btn:hover{
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.catTitle {
+    font-weight: bolder;
+    font-size: 20px;
+}
+
+#title:hover{
+    cursor: pointer;
+}
+
+.price{
+    font-weight: 600;
 }

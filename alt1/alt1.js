@@ -5,6 +5,13 @@ import {fillpage, getCatIdFromUrl, getTitleFromUrl, getMenOrWom } from "../utils
 
 export async function createNav(){
     let gender = getMenOrWom()
+    if(gender == "men"){
+        document.getElementById("men").style.fontWeight = "bold"
+        document.getElementById("women").style.fontWeight = "200"
+    }else{
+        document.getElementById("women").style.fontWeight = "bold"
+        document.getElementById("men").style.fontWeight = "200"
+    }
     console.log(gender)
 
     let navTitles = [

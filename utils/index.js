@@ -29,18 +29,29 @@ export function createProduct(product){
 }
 
 export function fillpage(products, alt){
-    document.getElementById("first-page-images-wrapper").style.display = "none"
-    let wrapper = document.getElementById("wrapper")
-    products.forEach(product => {
-        let productDiv = createProduct(product)
-        console.log(product)    
-        productDiv.addEventListener("click", () =>{
-            let url = product.url.split("#")
-            let gender = getMenOrWom()
-            window.location.href = `http://localhost:8888/alt${alt}/alt${alt}.html?gender=${gender}&page=product&url=${url[0]}&price=${product.price.current.text}`
-        })
-        wrapper.append(productDiv)
-    });
+    if(products.length != 0){
+        document.getElementById("first-page-images-wrapper").style.display = "none"
+        let wrapper = document.getElementById("wrapper")
+        products.forEach(product => {
+            let productDiv = createProduct(product)
+            console.log(product)    
+            productDiv.addEventListener("click", () =>{
+                let url = product.url.split("#")
+                let gender = getMenOrWom()
+                window.location.href = `http://localhost:8888/alt${alt}/alt${alt}.html?gender=${gender}&page=product&url=${url[0]}&price=${product.price.current.text}`
+            })
+            wrapper.append(productDiv)
+        });
+    }
+    else {
+        let sorry = document.createElement("div");
+        sorry.classList.add("sorry")
+        sorry.innerHTML = "Sorry, no products match your filter criteria. Please try adjusting your filters or check back later for updates."
+        wrapper.append(sorry)
+    }
+
+
+
 }
 
 export function createFrontPageWomen(){
