@@ -305,11 +305,19 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId){
     }
 
     let products = await getFilteredProducts(catId, searchString, 1)
+    console.log(products)
     createFilterCount(filterAmount, catId)
     let wrapper = document.getElementById("wrapper")
     wrapper.innerHTML = ""
-    fillpage(products, "1")
-    createShowMore(catId, 1, searchString)
+    if(products.length != 0){
+        fillpage(products, "1")
+        createShowMore(catId, 1, searchString)
+    }else{
+        let sorry = document.createElement("div");
+        sorry.classList.add("sorry")
+        sorry.innerHTML = "Sorry, no products match your filter criteria. Please try adjusting your filters or check back later for updates."
+        wrapper.append(sorry)
+    }
 }
 
 function createFilterCount(count, catId){
@@ -335,7 +343,7 @@ function createFilterCount(count, catId){
         let wrapper = document.getElementById("wrapper")
         wrapper.innerHTML = ""
         fillpage(products, "1")
-        createShowMore(catId, 1, null)
+        createShowMore(catId, 1, searchString)
         createFilterCount(0 , catId)
     })
 
@@ -370,9 +378,14 @@ async function createShowMore(catId, counter, searchString){
             console.log("ej search")
         }else{
             products = await getFilteredProducts(catId, searchString, counter)
-            console.log(searchString)
         }
-        fillpage(products, "1")
+
+        if(products.length == 0){
+            btnBox.innerHTML = "No more products to show"
+        }else{
+            fillpage(products, "1")
+
+        }
     })
 
   }
