@@ -1,4 +1,4 @@
-body{
+body {
     margin: 0px;
 }
 
@@ -112,6 +112,7 @@ body{
     padding-top: 60px;
 }
 
+
 /*#all-filters-container {
     height: fit-content;
     padding: 20px;
@@ -146,23 +147,24 @@ body{
 .filter-wrapper>div:nth-child(1)>div {
     flex-grow: 1;
 }*/
-#top{
+
+#top {
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-#type{
+#type {
     padding-top: 20px;
 }
 
-#all-filters-container{
+#all-filters-container {
     display: grid;
     grid-template-columns: repeat(5, 160px);
     gap: 15px;
 }
 
-.filter-wrapper{
+.filter-wrapper {
     position: relative;
     display: inline-block;
     min-width: 160px;
@@ -171,7 +173,7 @@ body{
     margin: 10px;
 }
 
-.filter-wrapper > div:nth-child(1){
+.filter-wrapper>div:nth-child(1) {
     height: 40px;
     display: flex;
     justify-content: center;
@@ -180,10 +182,9 @@ body{
     padding-right: 15px;
 }
 
-.filter-wrapper > div:nth-child(1) > div{
+.filter-wrapper>div:nth-child(1)>div {
     flex-grow: 1;
 }
-
 
 .dropdown-content {
     display: none;
@@ -226,10 +227,11 @@ body{
     margin-bottom: 30px;
 }
 
-.sideFilterName ul {
+
+/* .sideFilterName ul {
     list-style-type: none;
     padding-left: 20px;
-}
+} */
 
 #main-wrapper {
     display: grid;
@@ -237,13 +239,25 @@ body{
 }
 
 .sideFilterName {
-    padding-left: 15px;
+    /* padding-left: 15px; */
+}
+
+.mainTitle {
+    /* padding-left: 15px; */
+    padding-top: 10px;
+    list-style-type: none;
+    padding-left: 25px;
+    cursor: pointer;
 }
 
 .sideFilterType {
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding-top: 8px;
+    /* padding-bottom: 5px; */
+    padding-left: 35px;
     font-size: small;
+    cursor: pointer;
+    font-weight: bold;
+    margin: 0;
 }
 
 .sorry {
@@ -255,20 +269,15 @@ body{
     font-size: larger;
 }
 
-#first-page-images-wrapper{
+#first-page-images-wrapper {
     display: flex;
     border-top: 15px solid black;
     border-bottom: 10px solid black;
 }
 
-.first-page-img{
+.first-page-img {
     flex-grow: 1;
     height: 650px;
     background-position: center;
     background-size: cover;
-}
-
-li:hover{
-    cursor: pointer;
-    font-weight: bold;
 }

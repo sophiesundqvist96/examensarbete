@@ -529,6 +529,7 @@ async function createSideFilters(catData, catId, gender) {
         catTitle.classList.add("sideFilterName");
         let mainTitle = document.createElement("div")
         mainTitle.innerHTML = category.title;
+        mainTitle.classList.add("mainTitle")
         catTitle.appendChild(mainTitle)
 
         // Lägg till en klickhändelselyssnare för att ladda produkter för den valda kategorin och uppdatera sidofilter
@@ -592,10 +593,19 @@ async function createSideFilters(catData, catId, gender) {
                     catList.appendChild(type_li);
 
                     type_li.addEventListener("click", async() => {
+                        type_li.style.fontWeight = "900";
+                        type_li.style.textDecoration = "underline";
                         wrapper.innerHTML = "";
                         filterOnCheckedItems("style", type.id, "add", category.categoryId)
                     })
                 });
+            } else {
+
+                let sorry = document.createElement("div");
+                sorry.classList.add("sorry")
+                sorry.innerHTML = "Sorry, no products match your filter criteria. Please try adjusting your filters or check back later for updates."
+                wrapper.append(sorry)
+
             }
         }
         catTitle.appendChild(catList);
