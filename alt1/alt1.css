@@ -1,9 +1,9 @@
-body{
+body {
     margin: 0px;
     font-family: "Montserrat";
 }
 
-#all-filters{
+#all-filters {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -11,7 +11,7 @@ body{
     padding-bottom: 60px;
 }
 
-.filter-wrapper{
+.filter-wrapper {
     position: relative;
     display: inline-block;
     min-width: 160px;
@@ -20,11 +20,11 @@ body{
     margin: 10px;
 }
 
-.filter-wrapper:hover{
+.filter-wrapper:hover {
     cursor: pointer;
 }
 
-.filter-wrapper > div:nth-child(1){
+.filter-wrapper>div:nth-child(1) {
     height: 40px;
     display: flex;
     justify-content: center;
@@ -33,7 +33,7 @@ body{
     padding-right: 15px;
 }
 
-.filter-wrapper > div:nth-child(1) > div{
+.filter-wrapper>div:nth-child(1)>div {
     flex-grow: 1;
 }
 
@@ -42,13 +42,13 @@ body{
     position: absolute;
     background-color: #f9f9f9;
     min-width: 160px;
-    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
     z-index: 1;
     height: 200px;
     overflow: scroll;
 }
 
-.dropdown-content > div{
+.dropdown-content>div {
     display: flex;
     align-items: center;
     height: 40px;
@@ -57,45 +57,44 @@ body{
     padding-right: 15px;
 }
 
-.dropdown-content > div > div:nth-child(1){
-    flex-grow: 1;;
+.dropdown-content>div>div:nth-child(1) {
+    flex-grow: 1;
+    ;
 }
 
-.product-img > img{
+.product-img>img {
     border: 0.2px solid #e4e3e3;
+    cursor: pointer;
 }
 
-#count-wrapper{
+#count-wrapper {
     display: flex;
     width: 100%;
     padding-left: 40px;
     font-size: 11pt;
 }
 
-#count-wrapper > p{
+#count-wrapper>p {
     margin-right: 20px;
 }
 
-
-#count-wrapper > p:nth-child(1):hover{
+#count-wrapper>p:nth-child(1):hover {
     cursor: pointer;
     font-weight: bolder;
 }
 
-#all-filters-wrapper{
+#all-filters-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-
-
-#cat-title{
+#cat-title {
     padding-top: 20px;
 }
 
-#btnBox{
+#btnBox {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -103,14 +102,14 @@ body{
     padding-bottom: 30px;
 }
 
-#observer-btn{
+#observer-btn {
     border: 1px solid;
     padding-left: 20px;
     padding-right: 20px;
     font-size: 10pt;
 }
 
-#observer-btn:hover{
+#observer-btn:hover {
     cursor: pointer;
     font-weight: bold;
 }
