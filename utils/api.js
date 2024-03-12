@@ -6,7 +6,7 @@ export async function getCategories() {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '39a165bdf2mshaeda9d12044060bp1bf741jsn7b9a7649fcd8',
+            'X-RapidAPI-Key': 'b92c822c85msh61fc0eca3696034p11fa37jsn1f00924b4957',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -31,7 +31,7 @@ export async function getProductsByCatId(catId, page) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '39a165bdf2mshaeda9d12044060bp1bf741jsn7b9a7649fcd8',
+            'X-RapidAPI-Key': 'b92c822c85msh61fc0eca3696034p11fa37jsn1f00924b4957',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -53,7 +53,7 @@ export async function getFilter(filterType, catId) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '39a165bdf2mshaeda9d12044060bp1bf741jsn7b9a7649fcd8',
+            'X-RapidAPI-Key': 'b92c822c85msh61fc0eca3696034p11fa37jsn1f00924b4957',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -76,7 +76,7 @@ export async function getFilteredProducts(catId, filterstring, page) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '39a165bdf2mshaeda9d12044060bp1bf741jsn7b9a7649fcd8',
+            'X-RapidAPI-Key': 'b92c822c85msh61fc0eca3696034p11fa37jsn1f00924b4957',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -93,6 +93,7 @@ export async function getFilteredProducts(catId, filterstring, page) {
 
 // kanske ej behövs 
 export async function getProductByProductUrl(productUrl) {
+    console.log(productUrl)
     counter++
     console.log("fetch " + counter)
     const url = `https://asos-com1.p.rapidapi.com/products/detail?url=${productUrl}`;
@@ -100,7 +101,7 @@ export async function getProductByProductUrl(productUrl) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '39a165bdf2mshaeda9d12044060bp1bf741jsn7b9a7649fcd8',
+            'X-RapidAPI-Key': 'b92c822c85msh61fc0eca3696034p11fa37jsn1f00924b4957',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     }
@@ -108,7 +109,7 @@ export async function getProductByProductUrl(productUrl) {
     try {
         const response = await fetch(url, options);
         const result = await response.json();
-        //console.log(result)
+        console.log(result)
         return result.data
     } catch (error) {
         console.error(error);
@@ -123,7 +124,7 @@ export async function getSimilarProducts(catId) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '39a165bdf2mshaeda9d12044060bp1bf741jsn7b9a7649fcd8',
+            'X-RapidAPI-Key': 'b92c822c85msh61fc0eca3696034p11fa37jsn1f00924b4957',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
