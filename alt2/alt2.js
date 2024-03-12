@@ -514,7 +514,14 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
         if (i > 0) {
             searchString += "&"
         }
-        searchString += filter[i].title
+        let searchStringParameter
+        if(filter[i].title == "body-fit"){
+            searchStringParameter ="body_fit"
+        }else{
+            searchStringParameter = filter[i].title
+        }
+
+        searchString += searchStringParameter
         searchString += "="
         for (let j = 0; j < filter[i].checkedItems.length; j++) {
             if (j > 0) {
@@ -524,6 +531,7 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
         }
     }
 
+    console.log(searchString)
     let products = await getFilteredProducts(catId, searchString, 1)
     document.getElementById("wrapper").innerHTML = ""
     fillpage(products, "2")
