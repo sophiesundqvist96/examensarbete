@@ -228,8 +228,7 @@ async function createAllFilters(catId) {
     }
 
     //Style ska inte finnas här bara i sidefilter sen!
-    let filterTypes = ["color"]
-        // "brand", "size", "design", "body-fit", "discount", "range", "price-range"];
+    let filterTypes = ["color", "brand", "size", "design", "body-fit", "discount", "range", "price-range", "activity"];
     createAllFiltersTest(filterTypes, catId)
 
 }
@@ -324,6 +323,10 @@ let filterItems = [{
     },
     {
         title: "price-range",
+        checkedItems: []
+    },
+    {
+        title: "activity",
         checkedItems: []
     }
 ]
@@ -614,14 +617,14 @@ async function createSideFilters(catData, catId, gender) {
 
                     type_li.addEventListener("click", async(event) => {
                         event.stopPropagation()
-                        if(checkIfAlreadyChecked(type.id)){
+                        if (checkIfAlreadyChecked(type.id)) {
                             console.log(type.id)
                             wrapper.innerHTML = "";
                             type_li.style.fontWeight = "200";
                             type_li.style.textDecoration = "none";
                             filterOnCheckedItems("style", type.id, "delete", category.categoryId)
                             console.log(filterItems)
-                        }else{
+                        } else {
                             type_li.style.fontWeight = "500";
                             type_li.style.textDecoration = "underline";
                             wrapper.innerHTML = "";
@@ -640,15 +643,15 @@ async function createSideFilters(catData, catId, gender) {
     mainWrapper.append(wrapper);
 }
 
-function checkIfAlreadyChecked(typeId){
+function checkIfAlreadyChecked(typeId) {
     console.log(typeId)
     console.log(filterItems)
     let checkedStyleIds = filterItems.find(filter => filter.title == "style").checkedItems
     console.log(checkedStyleIds)
-    if(checkedStyleIds.includes(typeId)){
+    if (checkedStyleIds.includes(typeId)) {
         console.log("yes")
         return true
-    }else{
+    } else {
         console.log("nej")
         return false
     }
