@@ -1,10 +1,9 @@
-
 export async function getCategories() {
     const url = 'https://asos-com1.p.rapidapi.com/categories/list-shortened';
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '8a7fa047efmsh6398f041afb1bb0p13982djsn55adc4745502',
+            'X-RapidAPI-Key': 'bc7066dac5msha0cb443e27003e9p125249jsn4a3499eb9800',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -27,7 +26,7 @@ export async function getProductsByCatId(catId, page) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '8a7fa047efmsh6398f041afb1bb0p13982djsn55adc4745502',
+            'X-RapidAPI-Key': 'bc7066dac5msha0cb443e27003e9p125249jsn4a3499eb9800',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -47,7 +46,7 @@ export async function getFilter(filterType, catId) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '8a7fa047efmsh6398f041afb1bb0p13982djsn55adc4745502',
+            'X-RapidAPI-Key': 'bc7066dac5msha0cb443e27003e9p125249jsn4a3499eb9800',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -68,7 +67,7 @@ export async function getFilteredProducts(catId, filterstring, page) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '8a7fa047efmsh6398f041afb1bb0p13982djsn55adc4745502',
+            'X-RapidAPI-Key': 'bc7066dac5msha0cb443e27003e9p125249jsn4a3499eb9800',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -90,7 +89,7 @@ export async function getProductByProductUrl(productUrl) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '8a7fa047efmsh6398f041afb1bb0p13982djsn55adc4745502',
+            'X-RapidAPI-Key': 'bc7066dac5msha0cb443e27003e9p125249jsn4a3499eb9800',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     }
@@ -110,7 +109,7 @@ export async function getSimilarProducts(catId) {
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': '8a7fa047efmsh6398f041afb1bb0p13982djsn55adc4745502',
+            'X-RapidAPI-Key': 'bc7066dac5msha0cb443e27003e9p125249jsn4a3499eb9800',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
