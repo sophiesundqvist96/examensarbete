@@ -446,8 +446,8 @@ function createPriceRange(minPrice, maxPrice, dropdownContent, catId) {
     });
 
     minPriceRange.addEventListener("mouseup", ()=>{
-        let selectedMinPrice = minPriceRange.value 
-        let selectedMaxPrice = maxPriceRange.value
+        var selectedMinPrice = parseInt(minPriceRange.value);
+        var selectedMaxPrice = parseInt(maxPriceRange.value);
         filterOnCheckedItems("price-range", [selectedMinPrice, selectedMaxPrice], "add", catId)
     })
 
@@ -461,8 +461,8 @@ function createPriceRange(minPrice, maxPrice, dropdownContent, catId) {
     });
 
     maxPriceRange.addEventListener("mouseup", ()=>{
-        let selectedMinPrice = minPriceRange.value 
-        let selectedMaxPrice = maxPriceRange.value
+        let selectedMinPrice = Math.round(parseInt(minPriceRange.value))
+        let selectedMaxPrice = Math.round(parseInt(maxPriceRange.value))
         filterOnCheckedItems("price-range", [selectedMinPrice, selectedMaxPrice], "add", catId)
     })
 

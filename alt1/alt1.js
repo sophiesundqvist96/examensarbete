@@ -77,7 +77,7 @@ export async function createNav() {
 
         document.getElementById("navigation").append(titleDiv)
         document.getElementById("title").addEventListener("click", ()=>{
-            window.location.href = "`http://localhost:8888/alt1/alt1.html"
+            window.location.href = `http://localhost:8888/alt1/alt1.html?gender=women`
         })
 
     })
