@@ -194,10 +194,11 @@ body {
 .dropdown-content>div {
     display: flex;
     align-items: center;
-    height: 40px;
+    min-height: 40px;
     border-bottom: 0.5px solid lightgrey;
     padding-left: 15px;
     padding-right: 15px;
+    font-size: 10pt;
 }
 
 .dropdown-content>div>div:nth-child(1) {
@@ -317,3 +318,4 @@ body {
 .price {
     font-weight: 600;
 }
+

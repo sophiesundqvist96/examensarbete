@@ -1,12 +1,10 @@
-let counter = 0
+
 export async function getCategories() {
-    counter++
-    console.log("fetch " + counter)
     const url = 'https://asos-com1.p.rapidapi.com/categories/list-shortened';
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'b92c822c85msh61fc0eca3696034p11fa37jsn1f00924b4957',
+            'X-RapidAPI-Key': '8a7fa047efmsh6398f041afb1bb0p13982djsn55adc4745502',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -25,13 +23,11 @@ export const catData = await getCategories()
 
 // returnera en array av producter baserat på kategori-id (cid)
 export async function getProductsByCatId(catId, page) {
-    counter++
-    console.log("fetch " + counter)
     const url = `https://asos-com1.p.rapidapi.com/products/search-by-category?cid=${catId}&page=${page}`;
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'b92c822c85msh61fc0eca3696034p11fa37jsn1f00924b4957',
+            'X-RapidAPI-Key': '8a7fa047efmsh6398f041afb1bb0p13982djsn55adc4745502',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -47,13 +43,11 @@ export async function getProductsByCatId(catId, page) {
 }
 
 export async function getFilter(filterType, catId) {
-    counter++
-    console.log("fetch " + counter)
     const url = `https://asos-com1.p.rapidapi.com/filters/${filterType}?q=${catId}&search_type=ByCategory`;
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'b92c822c85msh61fc0eca3696034p11fa37jsn1f00924b4957',
+            'X-RapidAPI-Key': '8a7fa047efmsh6398f041afb1bb0p13982djsn55adc4745502',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -70,13 +64,11 @@ export async function getFilter(filterType, catId) {
 
 
 export async function getFilteredProducts(catId, filterstring, page) {
-    counter++
-    console.log("fetch " + counter)
     const url = `https://asos-com1.p.rapidapi.com/products/search-by-category?cid=${catId}&${filterstring}&page=${page}`;
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'b92c822c85msh61fc0eca3696034p11fa37jsn1f00924b4957',
+            'X-RapidAPI-Key': '8a7fa047efmsh6398f041afb1bb0p13982djsn55adc4745502',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
@@ -93,15 +85,12 @@ export async function getFilteredProducts(catId, filterstring, page) {
 
 // kanske ej behövs 
 export async function getProductByProductUrl(productUrl) {
-    console.log(productUrl)
-    counter++
-    console.log("fetch " + counter)
     const url = `https://asos-com1.p.rapidapi.com/products/detail?url=${productUrl}`;
     //console.log(url)
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'b92c822c85msh61fc0eca3696034p11fa37jsn1f00924b4957',
+            'X-RapidAPI-Key': '8a7fa047efmsh6398f041afb1bb0p13982djsn55adc4745502',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     }
@@ -109,7 +98,6 @@ export async function getProductByProductUrl(productUrl) {
     try {
         const response = await fetch(url, options);
         const result = await response.json();
-        console.log(result)
         return result.data
     } catch (error) {
         console.error(error);
@@ -118,13 +106,11 @@ export async function getProductByProductUrl(productUrl) {
 
 
 export async function getSimilarProducts(catId) {
-    counter++
-    console.log("fetch " + counter)
     const url = `https://asos-com1.p.rapidapi.com/products/list-similarities?id=${catId}`;
     const options = {
         method: 'GET',
         headers: {
-            'X-RapidAPI-Key': 'b92c822c85msh61fc0eca3696034p11fa37jsn1f00924b4957',
+            'X-RapidAPI-Key': '8a7fa047efmsh6398f041afb1bb0p13982djsn55adc4745502',
             'X-RapidAPI-Host': 'asos-com1.p.rapidapi.com'
         }
     };
