@@ -239,11 +239,8 @@ async function createAllFiltersTest(filterTypes, catId) {
     allFilterContainer.innerHTML = ""
     let third = Math.floor(filterTypes.length / 3);
     let arr1 = filterTypes.slice(0, third);
-    console.log(arr1)
     let arr2 = filterTypes.slice(third, third * 2); // Korrigerad linje
-    console.log(arr2)
     let arr3 = filterTypes.slice(third * 2); // Korrigerad linje
-    console.log(arr3)
 
     let filterswrapper1 = await callFilters(arr1, catId)
     let filterswrapper2 = await new Promise((resolve, reject) => {
@@ -259,9 +256,7 @@ async function createAllFiltersTest(filterTypes, catId) {
     });
 
     let filters = filterswrapper1.concat(filterswrapper2)
-    console.log(filters)
     filters = filters.concat(filterswrapper3)
-    console.log(filters)
 
     filters.forEach(filterWrapper => {
         if (filterWrapper != null) {
@@ -275,7 +270,6 @@ async function callFilters(array, catId) {
     let asyncFilterPromises = array.map(async filter => {
         let arrayOfFilters = await getFilter(filter, catId); // Vänta på att getFilter ska slutföras
         let filterWrapper = null
-        console.log(arrayOfFilters)
         if (arrayOfFilters != null) {
             filterWrapper = createFilters(arrayOfFilters, filter, catId);
         }
@@ -360,47 +354,125 @@ function createFilters(arrayOfFilters, filterTitle, catId) {
 
     filterWrapper.append(buttonDiv, dropdownWrapper)
 
-    if (arrayOfFilters != null) {
+    if (arrayOfFilters != null && filterTitle != "price-range") {
         arrayOfFilters.forEach(filter => {
             let option = document.createElement("div")
 
             let filterDiv = document.createElement("div")
             filterDiv.innerHTML = filter.name
-
             let checkBox = document.createElement("input")
             checkBox.setAttribute("type", "checkbox");
-
-            option.append(filterDiv, checkBox)
+                
+            option.append(filterDiv, checkBox)  
             dropdownWrapper.append(option)
 
-            const underFiltersContainer = document.getElementById('under-filters');
+            const underFiltersContainer = document.getElementById('under-filters'); 
             let selectedFilters = [];
-
-
-            checkBox.addEventListener("click", () => {
-
-                if (checkBox.checked) {
-                    filterOnCheckedItems(filterTitle, filter.id, "add", catId);
-                    selectedFilters.push(filter.name);
-                    handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, filterTitle, catId, checkBox)
-
-                } else {
-                    filterOnCheckedItems(filterTitle, filter.id, "delete", catId);
+              
+            checkBox.addEventListener("click", () => {                   
+                if (checkBox.checked){                      
+                    filterOnCheckedItems(filterTitle, filter.id, "add", catId);                  
+                    selectedFilters.push(filter.name);                  
+                    handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, filterTitle, catId, checkBox)                 
+                } else {                      
+                    filterOnCheckedItems(filterTitle, filter.id, "delete", catId);                   
                     handleCheckboxUnchecked(selectedFilters, underFiltersContainer, filter)
                 }
             });
         })
-
-
+    }else if(arrayOfFilters != null && filterTitle == "price-range"){
+        console.log(arrayOfFilters)
+        let obj = createPriceRange(arrayOfFilters[0].id, arrayOfFilters[1].id, dropdownWrapper, catId)
+        console.log(obj)
     }
     return filterWrapper
 }
 
+
+function createPriceRange(minPrice, maxPrice, dropdownContent, catId) {
+    // Skapa en container för prissliders och lägg till i DOM
+    var priceRangeContainer = document.createElement("div");
+    priceRangeContainer.style.display = "flex";
+    priceRangeContainer.style.flexDirection = "column"
+    priceRangeContainer.style.alignItems = "center";
+    dropdownContent.appendChild(priceRangeContainer);
+
+    var priceDisplayMin = document.createElement("p");
+    priceDisplayMin.innerHTML = "Min pris: $ " + minPrice
+    priceRangeContainer.appendChild(priceDisplayMin);
+    // Skapa element för min-pris-slider och lägg till i container
+    var minPriceRange = document.createElement("input");
+    minPriceRange.classList.add("min-price")
+    minPriceRange.type = "range";
+    minPriceRange.min = minPrice;
+    minPriceRange.max = maxPrice;
+    minPriceRange.value = minPrice;
+    priceRangeContainer.appendChild(minPriceRange);
+
+
+    var priceDisplayMax = document.createElement("p");
+    priceDisplayMax.innerHTML = "Max pris: $ " + maxPrice
+    priceRangeContainer.appendChild(priceDisplayMax);
+    // Skapa element för max-pris-slider och lägg till i container
+    var maxPriceRange = document.createElement("input");
+    maxPriceRange.type = "range";
+    maxPriceRange.min = minPrice;
+    maxPriceRange.max = maxPrice;
+    maxPriceRange.value = maxPrice;
+    priceRangeContainer.appendChild(maxPriceRange);
+
+    // Skapa element för att visa det valda priset
+    //var priceDisplay = document.createElement("p");
+
+    // Funktion för att uppdatera priserna och visa dem
+    function updatePrices() {
+        var selectedMinPrice = parseInt(minPriceRange.value);
+        var selectedMaxPrice = parseInt(maxPriceRange.value);
+        priceDisplayMin.innerHTML = "Min price: $ " + selectedMinPrice
+        priceDisplayMax.innerHTML = "Max price: $ " + selectedMaxPrice
+        //priceDisplay.textContent = "Min pris: $" + selectedMinPrice + ", Max pris: $" + selectedMaxPrice;
+        console.log(selectedMinPrice)
+        console.log(selectedMaxPrice)
+    }
+
+    // Lyssna på ändringar i prisslider
+    minPriceRange.addEventListener("input", function() {
+        // Säkerställ att min priset inte är högre än max priset
+        if (parseInt(minPriceRange.value) > parseInt(maxPriceRange.value)) {
+            maxPriceRange.value = minPriceRange.value;
+        }
+        updatePrices();
+        minPriceRange.style.setProperty("--webkit-slider-ratio", 1 - (parseInt(minPriceRange.value) - minPrice) / (maxPrice - minPrice));
+    });
+
+    minPriceRange.addEventListener("mouseup", ()=>{
+        let selectedMinPrice = minPriceRange.value 
+        let selectedMaxPrice = maxPriceRange.value
+        filterOnCheckedItems("price-range", [selectedMinPrice, selectedMaxPrice], "add", catId)
+    })
+
+    maxPriceRange.addEventListener("input", function() {
+        // Säkerställ att max priset inte är lägre än min priset
+        if (parseInt(maxPriceRange.value) < parseInt(minPriceRange.value)) {
+            minPriceRange.value = maxPriceRange.value;
+        }
+        updatePrices();
+        minPriceRange.style.setProperty("--webkit-slider-ratio", 1 - (parseInt(minPriceRange.value) - minPrice) / (maxPrice - minPrice));
+    });
+
+    maxPriceRange.addEventListener("mouseup", ()=>{
+        let selectedMinPrice = minPriceRange.value 
+        let selectedMaxPrice = maxPriceRange.value
+        filterOnCheckedItems("price-range", [selectedMinPrice, selectedMaxPrice], "add", catId)
+    })
+
+}
+
+
+
 function handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, filterTitle, catId, checkBox) {
 
     let clearButton = underFiltersContainer.querySelector(".clear-button");
-
-
 
     if (!clearButton) {
         clearButton = document.createElement("p");
@@ -409,12 +481,10 @@ function handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, f
         underFiltersContainer.appendChild(clearButton);
     }
 
-
     clearButton.addEventListener("click", async() => {
         clearFilters(selectedFilters, underFiltersContainer, catId)
 
     });
-
 
     selectedFilters.forEach(filterName => {
         const filterNameDiv = document.createElement("div");
@@ -437,7 +507,6 @@ function handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, f
                 }
             }
 
-
             filterOnCheckedItems(filterTitle, filter.id, "delete", catId);
             checkBox.checked = false;
         });
@@ -447,6 +516,8 @@ function handleCheckboxChecked(selectedFilters, underFiltersContainer, filter, f
     });
 
 }
+
+
 
 function handleCheckboxUnchecked(selectedFilters, underFiltersContainer, filter) {
     const filterNameDivs = underFiltersContainer.querySelectorAll(`.filterNameDiv`); // Ändra selektorn för att välja divs istället för paragrafer
@@ -496,7 +567,9 @@ async function clearFilters(selectedFilters, underFiltersContainer, catId) {
 
 
 async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
-    if (addOrdDelete == "add") {
+    if(title == "price-range"){
+        filterItems.find(item => item.title == title).checkedItems = checkedItem
+    }else if (addOrdDelete == "add") {
         filterItems.find(item => item.title == title).checkedItems.push(checkedItem)
     } else {
         let object = filterItems.find(item => item.title == title)
@@ -516,7 +589,9 @@ async function filterOnCheckedItems(title, checkedItem, addOrdDelete, catId) {
         }
         let searchStringParameter
         if(filter[i].title == "body-fit"){
-            searchStringParameter ="body_fit"
+            searchStringParameter = "body_fit"
+        }else if(filter[i].title == "price-range"){
+            searchStringParameter = "min_max_price"
         }else{
             searchStringParameter = filter[i].title
         }

@@ -26,7 +26,16 @@ export async function createProductPage(alt){
     let productUrl = getProductUrl()
     let productData = await getProductByProductUrl(productUrl)
     console.log(productData)
-    createOneProduct(productData, alt)
+    if(productData == null){
+        let productWrapper = document.getElementById("product-wrapper")
+        productWrapper.innerHTML = "Sorry, cant give more info about this product, go back to search for next"
+    }else{
+        createOneProduct(productData, alt)
+    }
+}
+
+function createWrongMessage(){
+
 }
 
 function createOneProduct(product, alt){

@@ -33,8 +33,7 @@ export function fillpage(products, alt){
         document.getElementById("first-page-images-wrapper").style.display = "none"
         let wrapper = document.getElementById("wrapper")
         products.forEach(product => {
-            let productDiv = createProduct(product)
-            console.log(product)    
+            let productDiv = createProduct(product)  
             productDiv.addEventListener("click", () =>{
                 let url = product.url.split("#")
                 let gender = getMenOrWom()

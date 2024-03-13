@@ -55,12 +55,8 @@ export async function createNav() {
                     id = title.id.men
                 }
 
-                products = await getProductsByCatId(id, 1)
-                await createAllFilters(id, title.title)
-                let wrapper = document.getElementById("wrapper")
-                wrapper.innerHTML = ""
-                fillpage(products, "1")
-                createShowMore(id, 1, null)
+                window.location.href = `http://localhost:8888/alt1/alt1.html?page=category&gender=${gender}&catId=${id}&title=${title.title}`
+                
             })
         } else {
             let data;
